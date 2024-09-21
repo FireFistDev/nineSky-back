@@ -32,26 +32,14 @@ export class UserService {
     }
   }
 
-  async findOne(id?: string, email?: string): Promise<User> {
-    try {
-      let user: User;
 
-      if (id) {
-        user = await this.userRepository.findOneBy({ id });
-      } else if (email) {
-        user = await this.userRepository.findOneBy({ email });
-      } else {
-        throw new Error('Either ID or email must be provided.');
-      }
-  
-      if (!user) {
-        throw new Error(`User with ${id ? `ID ${id}` : `email ${email}`} not found`);
-      }
-  
-      return user;
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      throw new Error(error.message);
+  async findOne(criteria: { [key: string]: any }): Promise<User> {
+    console.log(criteria)
+    try {
+        
+      return await this.userRepository.findOneBy(criteria);
+     } catch (error) {
+       throw new Error(error.message);
     }
   }
   

@@ -9,6 +9,7 @@ export class RegisterDto {
   @Length(2, 30)
   first_name: string;
   @IsString()
+  @MinLength(6) 
   password : string
   @IsString()
   @Length(2, 30)
@@ -17,11 +18,20 @@ export class RegisterDto {
   @IsEmail() 
   email: string;
   // @IsPhoneNumber(null) // Validates based on phone number format of a specific country, or generic with `null`
-  @IsNumberString() 
+  @IsString()
   phone_number: string;
 
-  @IsNumberString() // Ensures that the field contains only numeric characters
+  @IsString() 
   personal_number: string;
+
+
+
+  // @IsString()
+  // office: string;
+  // @IsString()
+  // city: string;
+  // @IsString()
+  // address: string;
 }
   export class LoginDto {
     @IsEmail()

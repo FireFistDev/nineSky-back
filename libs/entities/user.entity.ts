@@ -19,7 +19,12 @@ export class User {
   phone_number: number;
   @Column()
   personal_number: number;
-
+  // @Column()
+  // office: string;
+  // @Column()
+  // city: string;
+  // @Column()
+  // address: string;
   @OneToMany(() => Parcel, (parcel) => parcel.user)
   parcels: Parcel[]; // A user can have multiple parcels
 }
