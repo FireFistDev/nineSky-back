@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Flight } from 'libs/entities/flight.entity';
 
 @Module({
+  exports : [FlightService],
   imports: [TypeOrmModule.forFeature([Flight])],
   providers: [FlightService],
 })

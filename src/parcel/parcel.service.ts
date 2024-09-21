@@ -26,6 +26,18 @@ export class ParcelService {
     }
   }
 
+  async createMany(createParcelDtos: CreateParcelDto[]): Promise<Parcel[]> {
+    try {
+      // Create parcel entities from the DTOs
+      const parcels = createParcelDtos.map(dto => this.parcelRepository.create(dto));
+
+      return await this.parcelRepository.save(parcels);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create parcels');
+    }
+  }
+
+
   async findAll(): Promise<Parcel[]> {
     try {
       return await this.parcelRepository.find();

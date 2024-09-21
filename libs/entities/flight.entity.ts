@@ -1,13 +1,13 @@
-import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany , PrimaryGeneratedColumn } from 'typeorm';
 import { Parcel } from './parcel.entity';
 
 @Entity()
 export class Flight {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   flight_id: number;
 
   @Column()
-  fligt_from: string;
+  flight_from: string;
   @Column()
   arrival_date: string;
 

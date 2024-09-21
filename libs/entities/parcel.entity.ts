@@ -9,10 +9,10 @@ export class Parcel {
   @PrimaryColumn()
   tracking_id: number;
 
-  @Column()
+  @Column({ nullable: true })  // Allow either weight or vol_weight to be null
   weight: string;
 
-  @Column()
+  @Column({ nullable: true })
   vol_weight: string;
 
   @Column()

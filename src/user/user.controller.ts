@@ -8,8 +8,9 @@ import { JwtGuard } from 'libs/guards/Jwt.Auth.Guard';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
+  
+  @Get('profile')
   getProfile(){
-    return this.userService.getProfile();
+    // return this.userService.getProfile();
   }
 }

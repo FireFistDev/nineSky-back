@@ -6,6 +6,5 @@ export class CreateFlightDto {
   flight_from: string;
 
   @IsNotEmpty()
-  @IsDateString()
   arrival_date: string;
 }

@@ -4,15 +4,18 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'libs/entities/user.entity';
 import { Repository } from 'typeorm';
+import { Parcel } from 'libs/entities/parcel.entity';
 
 @Injectable()
 export class AdminService {
-  constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-  ) {}
+  // constructor(
 
-  async getUsers(): Promise<User[]> {
-    return await this.userRepository.find();
-  }
+  // ) {}
+
+  // async getUsers(): Promise<User[]> {
+  // }
+
+  // async createParcel() { 
+  
+  // }
 }
