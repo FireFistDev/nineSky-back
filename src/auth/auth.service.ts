@@ -13,12 +13,12 @@ export class AuthService {
   ) { }
   async register(registerDto: RegisterDto) {
     try {
-      const existingUser = await this.userService.findOne( {personal_number:registerDto.personal_number});
-       if (existingUser ) { 
+      const existingUser = await this.userService.findOne({ personal_number: registerDto.personal_number });
+      if (existingUser) {
         throw new ConflictException('ID ბარათის ნომერი უკვე რეგისტრირებულია!');
       }
-       const registeredUser = await this.userService.create(registerDto);
-      const payload = { username: registeredUser.email,email:registeredUser.email, sub: registeredUser.id };
+      const registeredUser = await this.userService.create(registerDto);
+      const payload = { username: registeredUser.email, email: registeredUser.email, sub: registeredUser.id };
 
       return {
         access_token: this.jwtService.sign(payload),
@@ -36,15 +36,18 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     try {
       const { email, password } = loginDto;
-      const user = await this.userService.findOne({email});
+      const user = await this.userService.findOne({ email });
       // const passwordValid = await bcrypt.compare(password, user.password);
       const passwordValid = password
       if (!user || !passwordValid) {
         throw new UnauthorizedException('პაროლი ან  ელ-ფოსტა არასწორია.');
       }
-      const payload = { username:  user?.first_name, email:user.email,  sub: user.id };
+      const payload = { username: user?.first_name, email: user.email, sub: user.id };
       return {
-        access_token: this.jwtService.sign(payload),
+        access_token: this.jwtService.sign(payload, {
+
+          expiresIn: '30d',
+        }),
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -55,14 +58,14 @@ export class AuthService {
   }
 
   async forgetPassword(email: string) {
-    const user = await this.userService.findOne( {email});
+    const user = await this.userService.findOne({ email });
     if (!user) {
       throw new NotFoundException('მომხმარებელი ამ ელ-ფოსტით ვერ მოიძებნა.');
     }
     const payload = { email: user.email, sub: user.id };
     const resetToken = this.jwtService.sign(payload, {
-      secret: 'reset-secret', // Use a separate secret for reset tokens
-      expiresIn: '1h', // Token valid for 1 hour
+
+      expiresIn: '30d',
     });
 
     await this.mailerService.sendActivationEmail(resetToken, user.email);

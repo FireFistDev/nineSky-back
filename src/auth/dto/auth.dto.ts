@@ -26,12 +26,12 @@ export class RegisterDto {
 
 
 
-  // @IsString()
-  // office: string;
-  // @IsString()
-  // city: string;
-  // @IsString()
-  // address: string;
+  @IsString()
+  office: string;
+  @IsString()
+  city: string;
+  @IsString()
+  address: string;
 }
   export class LoginDto {
     @IsEmail()

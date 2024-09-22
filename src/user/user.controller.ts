@@ -13,4 +13,14 @@ export class UserController {
   async getProfile(@Query("id")  id:string){
     return await this.userService.findOne({  id});
   }
+
+
+  @Post("update/:id")
+  @Get(':id')
+  @UseGuards(JwtGuard)
+  async updateProfile(@Param("id") id:string , @Body() body:UpdateUserDto){
+        
+        return await this.userService.update(id, body)
+
+  }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,7 +10,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
@@ -36,24 +36,36 @@ export class UserService {
   async findOne(criteria: { [key: string]: any }): Promise<User> {
     console.log(criteria)
     try {
-        
-      return await this.userRepository.findOneBy(criteria);
-     } catch (error) {
-       throw new Error(error.message);
+
+      const user = await this.userRepository.findOneBy(criteria);
+
+      if (!user) {
+        throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
+      }
+
+      return user
+    } catch (error) {
+      if(error instanceof  NotFoundException){
+       throw new NotFoundException(error.message)
+         
+      }
+      throw new InternalServerErrorException('Internal server error.');
+
     }
   }
-  
+
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     try {
       const user = await this.userRepository.findOneBy({ id });
       if (!user) {
-        throw new Error(`User with ID ${id} not found`);
+        throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
       }
       await this.userRepository.update(id, updateUserDto);
       return await this.userRepository.findOneBy({ id });
     } catch (error) {
       console.error('Error updating user:', error);
-      throw new Error(error.message);
+      throw new InternalServerErrorException('Internal server error.');
+
     }
   }
 
