@@ -10,14 +10,16 @@ import { Parcel } from 'libs/entities/parcel.entity';
 import { Flight } from 'libs/entities/flight.entity';
 import { Declaration } from 'libs/entities/Declaration.entity';
 import { AdminModule } from './admin/admin.module';
+import { TransactionModule } from './transaction/transaction.module';
+import { Transaction } from 'libs/entities/transactions.entity';
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
-    FlightModule,
-    ParcelModule,
-    AdminModule,
+    // FlightModule,
+    // ParcelModule,
+    // AdminModule,
     ConfigModule.forRoot({
       isGlobal: true, 
       envFilePath: '.env', 
@@ -32,13 +34,12 @@ import { AdminModule } from './admin/admin.module';
         username: configService.get<string>('POSTGRES_USER'),
         password: configService.get<string>('POSTGRES_PASSWORD'),
         database: configService.get<string>('POSTGRES_DB'),
-        entities: [User, Parcel, Flight, Declaration], 
+        entities: [User, Parcel, Flight, Declaration, Transaction], 
         synchronize: true, 
         migrationsRun: true,
         logging: true,
       }),
     }),
-
   ],
 })
 export class AppModule {}
