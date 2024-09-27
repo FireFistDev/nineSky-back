@@ -12,6 +12,7 @@ import { Declaration } from 'libs/entities/Declaration.entity';
 import { AdminModule } from './admin/admin.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { Transaction } from 'libs/entities/transactions.entity';
+import { DeclarationModule } from './declaration/declaration.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { Transaction } from 'libs/entities/transactions.entity';
         logging: true,
       }),
     }),
+    DeclarationModule,
   ],
 })
 export class AppModule {}
