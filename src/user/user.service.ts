@@ -45,9 +45,9 @@ export class UserService {
 
       return user
     } catch (error) {
-      if(error instanceof  NotFoundException){
-       throw new NotFoundException(error.message)
-         
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message)
+
       }
       throw new InternalServerErrorException('Internal server error.');
 

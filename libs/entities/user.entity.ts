@@ -26,5 +26,5 @@ export class User {
   @Column()
   address: string;
   @OneToMany(() => Parcel, (parcel) => parcel.user)
-  parcels: Parcel[]; // A user can have multiple parcels
+  parcels: Parcel[]; 
 }

@@ -15,10 +15,9 @@ export class UserController {
   }
 
 
-  @Post("update/:id")
-  @Get(':id')
+  @Post("update")
   @UseGuards(JwtGuard)
-  async updateProfile(@Param("id") id:string , @Body() body:UpdateUserDto){
+  async updateProfile(@Query("id") id:string , @Body() body:UpdateUserDto){
         
         return await this.userService.update(id, body)
 
