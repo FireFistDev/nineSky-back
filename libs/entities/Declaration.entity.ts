@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   OneToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
@@ -10,20 +11,25 @@ import { Parcel } from './parcel.entity';
 @Entity()
 export class Declaration {
   @PrimaryGeneratedColumn()
-  id: number; // Use a generated column for IDs
+  id: string; 
 
   @OneToOne(() => Parcel, (parcel) => parcel.declaration, { nullable: true })
+  @JoinColumn({ name: 'parcelId' })
   parcel: Parcel;
+
+  @Column({ nullable: true })
+  parcelId: number;  
+  
   @Column()
-  type: string; // Type of declaration
+  type: string;
 
   @Column()
   price: string;
   @Column()
-  website: string; // Website associated with declaration
+  website: string;
   @Column('text', { nullable: true })
-  comment: string; // Optional comment
+  comment: string;
 
-  @Column()
-  pdf_path: string; // Path to the PDF document
+  @Column( { nullable: true })
+  pdf_path: string; 
 }

@@ -3,6 +3,7 @@ import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from 'src/mailer/mailer.service';
+import { AccessLevel } from 'libs/enums/accese.levels.enum';
 
 @Injectable()
 export class AuthService {
@@ -13,12 +14,8 @@ export class AuthService {
   ) { }
   async register(registerDto: RegisterDto) {
     try {
-      const existingUser = await this.userService.findOne({ personal_number: registerDto.personal_number });
-      if (existingUser) {
-        throw new ConflictException('ID ბარათის ნომერი უკვე რეგისტრირებულია!');
-      }
       const registeredUser = await this.userService.create(registerDto);
-      const payload = { username: registeredUser.email, email: registeredUser.email, sub: registeredUser.id };
+      const payload = {email: registeredUser.email, sub: registeredUser.id, AccessLevel :registeredUser.accessLevel};
 
       return {
         access_token: this.jwtService.sign(payload),
