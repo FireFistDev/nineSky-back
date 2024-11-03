@@ -4,7 +4,6 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../libs/entities/user.entity';
-import { FlightModule } from './flight/flight.module';
 import { ParcelModule } from './parcel/parcel.module';
 import { Parcel } from 'libs/entities/parcel.entity';
 import { Declaration } from 'libs/entities/Declaration.entity';
@@ -16,10 +15,10 @@ import { DeclarationModule } from './declaration/declaration.module';
 @Module({
   imports: [
     AuthModule,
+    AdminModule,
     // UserModule,
     // DeclarationModule,
     // ParcelModule,
-    // AdminModule,
     ConfigModule.forRoot({
       isGlobal: true, 
       envFilePath: '.env', 

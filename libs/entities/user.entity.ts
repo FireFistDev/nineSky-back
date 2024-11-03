@@ -7,7 +7,7 @@ import { TransactionType } from 'libs/enums/transactions.enum';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
   @Column()
   password: string;
