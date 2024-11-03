@@ -4,8 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../libs/entities/user.entity';
-import { FlightModule } from './flight/flight.module';
-import { ParcelModule } from './parcel/parcel.module';
+ import { ParcelModule } from './parcel/parcel.module';
 import { Parcel } from 'libs/entities/parcel.entity';
 import { Declaration } from 'libs/entities/Declaration.entity';
 import { AdminModule } from './admin/admin.module';
@@ -19,7 +18,7 @@ import { DeclarationModule } from './declaration/declaration.module';
     // UserModule,
     // DeclarationModule,
     // ParcelModule,
-    // AdminModule,
+    AdminModule,
     ConfigModule.forRoot({
       isGlobal: true, 
       envFilePath: '.env', 
@@ -36,7 +35,7 @@ import { DeclarationModule } from './declaration/declaration.module';
         database: configService.get<string>('POSTGRES_DB'),
         entities: [User, Parcel,  Declaration, Transaction], 
         synchronize: true, 
-        migrationsRun: false,
+        migrationsRun: true,
         logging: true,
       }),
     }),

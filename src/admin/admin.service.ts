@@ -1,21 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'libs/entities/user.entity';
 import { Repository } from 'typeorm';
-import { Parcel } from 'libs/entities/parcel.entity';
 
 @Injectable()
 export class AdminService {
-  // constructor(
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-  // ) {}
+  async getUsers(searchTerm: string, page: number = 1, limit: number = 10): Promise<{ data: User[]; total: number; totalPages: number; currentPage: number }> {
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
 
-  // async getUsers(): Promise<User[]> {
-  // }
+    if (searchTerm) {
+      queryBuilder.where('user.email LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+                  .orWhere('user.first_name LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+                  .orWhere('user.last_name LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+                  .orWhere('user.personal_number LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+                  .orWhere('user.office LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+                  .orWhere('user.city LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+                  .orWhere('user.address LIKE :searchTerm', { searchTerm: `%${searchTerm}%` });
+    }
 
-  // async createParcel() { 
-  
-  // }
+    // Set pagination parameters
+    const total = await queryBuilder.getCount(); // Total number of matching records
+    const totalPages = Math.ceil(total / limit);
+    const offset = (page - 1) * limit;
+
+    // Apply pagination
+    queryBuilder.skip(offset).take(limit);
+
+    // Execute query and return paginated results
+    const data = await queryBuilder.getMany();
+
+    return {
+      data,
+      total,
+      totalPages,
+      currentPage: page,
+    };
+  }
 }
