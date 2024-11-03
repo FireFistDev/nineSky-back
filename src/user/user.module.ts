@@ -17,8 +17,6 @@ import { TransactionModule } from 'src/transaction/transaction.module';
     secret: process.env.JWT_SECRET, 
     signOptions: { expiresIn: '30d' },  
   }),
-
-  
  ],
   controllers: [UserController],
   providers: [UserService, LocalStrategy ,JwtStrategy, JwtGuard,],

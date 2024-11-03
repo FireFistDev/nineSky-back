@@ -12,7 +12,7 @@ export class DeclarationService {
   async create(createDeclarationDto: CreateDeclarationDto) {
   try {
     const {parcelId  , type , price ,website ,comment  } = createDeclarationDto;
-    const  newDeclaration = this.declarationRepository.create({parcelId , type , price ,website ,comment })
+    const  newDeclaration = this.declarationRepository.create({  type , price ,website ,comment })
     return await this.declarationRepository.save(newDeclaration);
   } catch (error) {
     throw new error;
