@@ -7,6 +7,7 @@ import { ParcelService } from 'src/parcel/parcel.service';
 import { privateDecrypt } from 'crypto';
 import { UserService } from 'src/user/user.service';
 import { UpdateParcelDto } from 'src/parcel/dto/update-parcel.dto';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 
 
 @Injectable()
@@ -49,9 +50,13 @@ export class AdminService {
   }
 
 }
- async getUsers(data ){
+ async getUsers(data :getUserDto ){
   const users = this.userService.findAll(data)
   return users;
  } 
+
+ async updateUser(id : stringdata : UpdateUserDto){
+  await this.userService.update(id,{...data})
+ }
  
 }
