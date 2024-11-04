@@ -8,10 +8,12 @@ import { privateDecrypt } from 'crypto';
 import { UserService } from 'src/user/user.service';
 import { UpdateParcelDto } from 'src/parcel/dto/update-parcel.dto';
 
+
 @Injectable()
 export class AdminService {
   constructor(
     private readonly parcelService: ParcelService,
+    private readonly userService : UserService,
   ) {}
 
   async createParcels(createParcelDto : any[]){
@@ -45,46 +47,11 @@ export class AdminService {
   } catch (error) {
     throw new Error(error)
   }
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  getUsers(searchTerm: string, pageNumber: number, limitNumber: number) {
-    throw new Error('Method not implemented.');
-  }
-
 
 }
-    // if (searchTerm) {
-    //   queryBuilder.where('user.email LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
-    //               .orWhere('user.first_name LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
-    //               .orWhere('user.last_name LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
-    //               .orWhere('user.personal_number LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
-    //               .orWhere('user.office LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
-    //               .orWhere('user.city LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
-    //               .orWhere('user.address LIKE :searchTerm', { searchTerm: `%${searchTerm}%` });
-  //   // }
-
-  // async createParcel(createParcelDto : any) { 
-  
-  // }
-// }
+ async getUsers(data ){
+  const users = this.userService.findAll(data)
+  return users;
+ } 
+ 
+}

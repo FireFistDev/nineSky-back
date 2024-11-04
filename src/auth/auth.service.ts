@@ -3,7 +3,7 @@ import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from 'src/mailer/mailer.service';
-import { AccessLevel } from 'libs/enums/accese.levels.enum';
+
 
 @Injectable()
 export class AuthService {
@@ -39,12 +39,10 @@ export class AuthService {
       if (!user || !passwordValid) {
         throw new UnauthorizedException('პაროლი ან  ელ-ფოსტა არასწორია.');
       }
-      const payload = { username: user?.first_name, email: user.email, sub: user.id };
+      console.log(user)
+      const payload = { username: user?.first_name, email: user.email, userId: user.id,level : user.accessLevel };
       return {
-        access_token: this.jwtService.sign(payload, {
-
-          expiresIn: '30d',
-        }),
+        access_token: this.jwtService.sign(payload),
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -60,10 +58,7 @@ export class AuthService {
       throw new NotFoundException('მომხმარებელი ამ ელ-ფოსტით ვერ მოიძებნა.');
     }
     const payload = { email: user.email, sub: user.id };
-    const resetToken = this.jwtService.sign(payload, {
-
-      expiresIn: '30d',
-    });
+    const resetToken = this.jwtService.sign(payload);
 
     await this.mailerService.sendActivationEmail(resetToken, user.email);
   }

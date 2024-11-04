@@ -12,7 +12,7 @@ export class UserService {
     private userRepository: Repository<User>,
   ) { }
 
-  
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
       const user = await this.userRepository.save(createUserDto);
@@ -24,9 +24,26 @@ export class UserService {
     }
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(data : getUserDto): Promise<User[]> {
     try {
-      return await this.userRepository.find();
+      
+      const {
+        personalNumber = '', // Default to empty string if not provided
+        page = 1,            // Default to 1 if not provided
+        limit = 2            // Default to 5 if not provided
+    } = data;
+
+      const query = this.userRepository.createQueryBuilder('user')
+        .leftJoin('user.parcels', 'parcel')
+        .addSelect(['parcel.tracking_id',]);
+      // Apply filter for personal number if provided
+      if (data.personalNumber) {
+        query.andWhere('user.personal_number = :personal_number', { personal_number: personalNumber });
+      }
+      query.skip((page - 1) * limit).take(limit);
+        // Fetch users and their related parcels and transactions
+        const users = await query.getMany();
+      return users;
     } catch (error) {
       console.error('Error fetching users:', error);
       throw new Error('Failed to fetch users');
@@ -35,18 +52,18 @@ export class UserService {
 
 
   async findOne(criteria: { [key: string]: any }): Promise<User> {
-    
+
     console.log(criteria)
     try {
 
       const user = await this.userRepository.findOne({
         where: criteria,
-        relations: ['transactions',], 
+        relations: ['transactions',],
       });
       if (!user) {
         throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
       }
-      return {...user, balance : user.balance , isAdmin : user.isAdmin}
+      return { ...user, balance: user.balance, isAdmin: user.isAdmin }
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message)
@@ -71,7 +88,7 @@ export class UserService {
       throw new InternalServerErrorException('Internal server error.');
     }
   }
-  
+
   async remove(id: string): Promise<void> {
     try {
       const user = await this.userRepository.findOneBy({ id });

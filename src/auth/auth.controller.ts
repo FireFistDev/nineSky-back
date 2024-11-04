@@ -20,9 +20,9 @@ export class AuthController {
   async forgetPassword(@Body() body :  { email : string}) {
     return this.authService.forgetPassword(body.email);
   }
-  @Post('admin')
+  @Post('admin-login')
   async adminLogin(@Body() body: LoginDto ) {
-    // return this.authService.login(body);
+    return this.authService.login(body);
   }
  
 }

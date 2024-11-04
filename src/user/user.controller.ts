@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Re
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { LocalAuthGuard } from 'libs/guards/local.Guard';
 import { JwtGuard } from 'libs/guards/Jwt.Auth.Guard';
 import { TransactionService } from 'src/transaction/transaction.service';
 import { GetUser } from 'libs/decorators/getUser';
