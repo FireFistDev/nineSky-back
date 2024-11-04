@@ -55,8 +55,8 @@ export class AdminService {
   return users;
  } 
 
- async updateUser(id : stringdata : UpdateUserDto){
-  await this.userService.update(id,{...data})
+ async updateUser(id : string, data : UpdateUserDto){
+  await this.userService.update(id,{...UpdateUserDto})
  }
  
 }

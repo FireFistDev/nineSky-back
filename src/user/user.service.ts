@@ -23,32 +23,46 @@ export class UserService {
       throw new Error(error.message);
     }
   }
-
-  async findAll(data : getUserDto): Promise<User[]> {
+  async findAll(data: getUserDto): Promise<{ users: User[], totalPages: number, totalCount: number, currentPage: number }> {
     try {
-      
-      const {
-        personalNumber = '', // Default to empty string if not provided
-        page = 1,            // Default to 1 if not provided
-        limit = 2            // Default to 5 if not provided
-    } = data;
+        const {
+            personalNumber = '', // Default to empty string if not provided
+            page = 1,            // Default to 1 if not provided
+            limit = 2            // Default to 5 if not provided
+        } = data;
 
-      const query = this.userRepository.createQueryBuilder('user')
-        .leftJoin('user.parcels', 'parcel')
-        .addSelect(['parcel.tracking_id',]);
-      // Apply filter for personal number if provided
-      if (data.personalNumber) {
-        query.andWhere('user.personal_number = :personal_number', { personal_number: personalNumber });
-      }
-      query.skip((page - 1) * limit).take(limit);
-        // Fetch users and their related parcels and transactions
+        const query = this.userRepository.createQueryBuilder('user')
+            .leftJoin('user.parcels', 'parcel')
+            .addSelect(['parcel.tracking_id']);
+
+        // Apply filter for personal number if provided
+        if (personalNumber) {
+            query.andWhere('user.personal_number = :personal_number', { personal_number: personalNumber });
+        }
+
+        // Get total count of users before applying pagination
+        const totalCount = await query.getCount();
+
+        // Set pagination
+        query.skip((page - 1) * limit).take(limit);
+
+        // Fetch users and their related parcels
         const users = await query.getMany();
-      return users;
+
+        // Calculate total pages
+        const totalPages = Math.ceil(totalCount / limit);
+
+        return {
+            users,
+            totalPages,
+            totalCount,
+            currentPage: page
+        };
     } catch (error) {
-      console.error('Error fetching users:', error);
-      throw new Error('Failed to fetch users');
+        console.error('Error fetching users:', error);
+        throw new Error('Failed to fetch users');
     }
-  }
+}
 
 
   async findOne(criteria: { [key: string]: any }): Promise<User> {

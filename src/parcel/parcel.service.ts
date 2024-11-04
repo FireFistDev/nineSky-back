@@ -59,26 +59,53 @@ export class ParcelService {
   }
 
 
-  async findAll(_data : getParcelDto ): Promise<Parcel[]> {
+  async findAll(_data: getParcelDto): Promise<{ parcels: Parcel[], totalPages: number, totalCount: number, currentPage: number }> {
     try {
-      const query = this.parcelRepository.createQueryBuilder('parcel')
-      .leftJoin('parcel.owner', 'owner')
-      .addSelect(['owner.id', 'owner.first_name' , 'owner.personal_number', 'owner.last_name']);
-      if (_data.tracking_id) {
-        query.andWhere('parcel.tracking_id = :tracking_id', { tracking_id: _data.tracking_id });
-      }
-      if (_data.owner) {
-        query.andWhere('parcel.ownerId = :ownerId', { ownerId : _data.owner });
-      }
-      // Set pagination
-      query.skip((_data.page - 1) * _data.limit).take(_data.limit);
-      const data = await query.getMany();
-      return data
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to retrieve parcels');
-    }
+        const {
+            tracking_id = '',  // Default to empty if not provided
+            owner = null,      // Default to null if not provided
+            page = 1,          // Default to 1 if not provided
+            limit = 5          // Default to 5 if not provided
+        } = _data;
 
-  }
+        const query = this.parcelRepository.createQueryBuilder('parcel')
+            .leftJoin('parcel.owner', 'owner')
+            .addSelect(['owner.id', 'owner.first_name', 'owner.last_name', 'owner.personal_number']);
+
+        // Apply filter for tracking ID if provided
+        if (tracking_id) {
+            query.andWhere('parcel.tracking_id = :tracking_id', { tracking_id });
+        }
+
+        // Apply filter for owner ID if provided
+        if (owner) {
+            query.andWhere('parcel.ownerId = :ownerId', { ownerId: owner });
+        }
+
+        // Get total count of parcels before applying pagination
+        const totalCount = await query.getCount();
+
+        // Set pagination
+        query.skip((page - 1) * limit).take(limit);
+
+        // Fetch parcels with related owner information
+        const parcels = await query.getMany();
+
+        // Calculate total pages
+        const totalPages = Math.ceil(totalCount / limit);
+
+        return {
+            parcels,
+            totalPages,
+            totalCount,
+            currentPage: page
+        };
+    } catch (error) {
+        console.error('Error fetching parcels:', error);
+        throw new InternalServerErrorException('Failed to retrieve parcels');
+    }
+}
+
 
   async findOne(id: string): Promise<Parcel> {
     try {

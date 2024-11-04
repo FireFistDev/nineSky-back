@@ -40,13 +40,13 @@ export class AdminController {
     return this.adminService.updateParcel(id, updateParcelDto);
   }
 //  useres  modzebna
-@UseGuards(JwtAdminGuard)
+// @UseGuards(JwtAdminGuard)
   @Get('/get-users')
   getUsers(@Query()data : getUserDto  ){
     return this.adminService.getUsers(data)
   }
 //  users update
-@UseGuards(JwtAdminGuard)
+// @UseGuards(JwtAdminGuard)
   @Get('/update-user')
   updateUser(@Body() data : UpdateUserDto ,@Param('id') id: string, ){
     return this.adminService.updateUser(id,data)
