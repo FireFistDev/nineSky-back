@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Req, UseInterceptors, UploadedFiles, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Req, UseInterceptors, UploadedFiles, UploadedFile, BadRequestException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,46 +13,48 @@ import { CreateDeclarationDto } from 'src/declaration/dto/create-declaration.dto
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService, private readonly TransactionService : TransactionService) {}
+  constructor(private readonly userService: UserService, private readonly TransactionService: TransactionService) { }
+
+  @Get('profile/:id')
+  // @UseGuards(JwtGuard)
+  async getProfile(@Param('id') id: string) {
+    const profile = await this.userService.findOne({ id });
+    return profile;
+  }
+
+
+  @Post("update/:id")
+  // @UseGuards(JwtGuard)
+  async updateProfile(@Param('id') id: string, @Body() body: any) {
+    if (!id) {
+      throw new BadRequestException('User ID is required.');
+    }
+    return await this.userService.update(id, body);
+  }
   
-  @Get('profile')
-  @UseGuards(JwtGuard)
-  async getProfile(@GetUser() user ){
-    const profile = await this.userService.findOne({email : user.email});
-    return profile
-  }
-
-
-  @Post("update")
-  @UseGuards(JwtGuard)
-  async updateProfile(   @GetUser() user: any ,@Body() body:UpdateUserDto){
-        
-        return await this.userService.update(user.sub, body)
-
-  }
-
+  
   @Post('deposite')
   @UseGuards(JwtGuard)
-  async updateBalance(  @GetUser() user: any ,@Body() body:any){
-    const transactionData : CreateTransactionDto= {
+  async updateBalance(@GetUser() user: any, @Body() body: any) {
+    const transactionData: CreateTransactionDto = {
       userId: user.sub,
-      amount : body.amount,
-      transactionType : body.transactionType
+      amount: body.amount,
+      transactionType: body.transactionType
     }
-    return await  this.TransactionService.create(transactionData)
+    return await this.TransactionService.create(transactionData)
   }
 
   @Post('declarate-parcel')
   @UseInterceptors(FileInterceptor('file'))
   // @UseGuards(JwtGuard)
-  async declarateParcel( @Body() body : CreateDeclarationDto ,  @UploadedFile() file: Express.Multer.File, ){
+  async declarateParcel(@Body() body: CreateDeclarationDto, @UploadedFile() file: Express.Multer.File,) {
     console.log(file)
     console.log(body)
   }
 
   @Post('pay-parcels')
   @UseGuards(JwtGuard)
-  async payParcels(@GetUser() user : any , @Body() body : any){
+  async payParcels(@GetUser() user: any, @Body() body: any) {
 
   }
 }

@@ -48,17 +48,18 @@ export class UserService {
       }
       return {...user, balance : user.balance , isAdmin : user.isAdmin}
     } catch (error) {
-      if(error instanceof  NotFoundException){
-       throw new NotFoundException(error.message)
-         
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message)
+
       }
       throw new InternalServerErrorException('Internal server error.');
 
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: string, updateUserDto: any): Promise<any> {
     try {
+      console.log('Updating user with ID:', id);  // Add this line
       const user = await this.userRepository.findOneBy({ id });
       if (!user) {
         throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
@@ -68,10 +69,9 @@ export class UserService {
     } catch (error) {
       console.error('Error updating user:', error);
       throw new InternalServerErrorException('Internal server error.');
-
     }
   }
-
+  
   async remove(id: string): Promise<void> {
     try {
       const user = await this.userRepository.findOneBy({ id });

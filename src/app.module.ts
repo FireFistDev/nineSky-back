@@ -35,7 +35,7 @@ import { DeclarationModule } from './declaration/declaration.module';
         database: configService.get<string>('POSTGRES_DB'),
         entities: [User, Parcel,  Declaration, Transaction], 
         synchronize: true, 
-        migrationsRun: false,
+        migrationsRun: true,
         logging: true,
       }),
     }),

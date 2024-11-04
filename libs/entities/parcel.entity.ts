@@ -7,7 +7,7 @@ import { PaymentType } from 'libs/enums/payment.status.enum';
 @Entity()
 export class Parcel {
   @PrimaryColumn()
-  tracking_id: number;
+  tracking_id: string;
   
   @Column()
   flight_id: string;
@@ -16,13 +16,13 @@ export class Parcel {
   flight_from: string;
 
   @Column()
-  arrived_at : number;
+  arrived_at : string;
 
   @Column({ nullable: true }) 
-  weight: string;
+  weight: number;
 
   @Column({ nullable: true })
-  vol_weight: string;
+  vol_weight: number;
 
   @Column()
   price: number;
@@ -45,5 +45,5 @@ export class Parcel {
   declaration: Declaration;
 
   @ManyToOne(() => User, (user) => user.parcels)
-  user: User; 
+  owner: User; 
 }
