@@ -65,7 +65,7 @@ export class ParcelService {
             tracking_id = '',  // Default to empty if not provided
             owner = null,      // Default to null if not provided
             page = 1,          // Default to 1 if not provided
-            limit = 5          // Default to 5 if not provided
+            limit = 10         // Default to 5 if not provided
         } = _data;
 
         const query = this.parcelRepository.createQueryBuilder('parcel')

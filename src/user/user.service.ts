@@ -65,18 +65,18 @@ export class UserService {
 }
 
 
-  async findOne(criteria: { [key: string]: any }): Promise<User> {
+  async findOne(criteria: { [key: string]: any }){
 
-    console.log(criteria)
     try {
 
       const user = await this.userRepository.findOne({
         where: criteria,
-        relations: ['transactions',],
+        relations: ['transactions','parcels'],
       });
       if (!user) {
         throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
       }
+      
       return { ...user, balance: user.balance, isAdmin: user.isAdmin }
     } catch (error) {
       if (error instanceof NotFoundException) {

@@ -16,7 +16,7 @@ import { DeclarationModule } from './declaration/declaration.module';
   imports: [
     AuthModule,
     AdminModule,
-    // UserModule,
+    UserModule,
     // DeclarationModule,
     // ParcelModule,
     ConfigModule.forRoot({

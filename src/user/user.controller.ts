@@ -10,30 +10,27 @@ import { CreateTransactionDto } from 'src/transaction/dto/create-transaction.dto
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { CreateDeclarationDto } from 'src/declaration/dto/create-declaration.dto';
 
+@UseGuards(JwtGuard)
 @Controller('user')
+
 export class UserController {
   constructor(private readonly userService: UserService, private readonly TransactionService: TransactionService) { }
 
-  @Get('profile/:id')
-  // @UseGuards(JwtGuard)
-  async getProfile(@Param('id') id: string) {
-    const profile = await this.userService.findOne({ id });
-    return profile;
+//  profili tavis tranzaqciebit da amanatebbit 
+  @Get('profile')
+  @UseGuards(JwtGuard)
+  async getProfile(@GetUser() user : userPaylaod ) {
+    const profile = await this.userService.findOne({ id : user.userId }); 
+    return profile
   }
 
-
-  @Post("update/:id")
-  // @UseGuards(JwtGuard)
-  async updateProfile(@Param('id') id: string, @Body() body: any) {
-    if (!id) {
-      throw new BadRequestException('User ID is required.');
-    }
-    return await this.userService.update(id, body);
+  @Post("update")
+  async updateProfile(@GetUser() user : userPaylaod , @Body() body: any) {
+    return await this.userService.update(user.userId, body);
   }
   
   
   @Post('deposite')
-  @UseGuards(JwtGuard)
   async updateBalance(@GetUser() user: any, @Body() body: any) {
     const transactionData: CreateTransactionDto = {
       userId: user.sub,
@@ -45,7 +42,7 @@ export class UserController {
 
   @Post('declarate-parcel')
   @UseInterceptors(FileInterceptor('file'))
-  // @UseGuards(JwtGuard)
+  // 
   async declarateParcel(@Body() body: CreateDeclarationDto, @UploadedFile() file: Express.Multer.File,) {
     console.log(file)
     console.log(body)
