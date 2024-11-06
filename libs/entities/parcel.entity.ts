@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user.entity';
 import { ShippingStatus } from 'libs/enums/shipping.status.enum';
 import { Declaration } from './Declaration.entity';
@@ -6,6 +6,8 @@ import { PaymentType } from 'libs/enums/payment.status.enum';
 
 @Entity()
 export class Parcel {
+  @PrimaryGeneratedColumn()
+  id : number;
   @PrimaryColumn()
   tracking_id: string;
   

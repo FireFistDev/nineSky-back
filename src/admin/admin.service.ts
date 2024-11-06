@@ -39,7 +39,6 @@ export class AdminService implements OnModuleInit {
 
   async createParcels(createParcelDto: any[]) {
     try {
-      
       return await this.parcelService.createMany(createParcelDto)
     } catch (error) {
       throw new Error(error)

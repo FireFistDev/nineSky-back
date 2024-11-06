@@ -15,7 +15,7 @@ import { User } from 'libs/entities/user.entity';
 @Injectable()
 export class ParcelService {
   constructor(
-    @InjectRepository(Parcel)
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Parcel)
     private readonly parcelRepository: Repository<Parcel>,
@@ -34,10 +34,10 @@ export class ParcelService {
 
   async createMany(createParcelDtos: CreateParcelDto[]): Promise<Parcel[]> {
     try {
+
       const parcels: Parcel[] = [];
       for (const dto of createParcelDtos) {
         let owner = await this.userRepository.findOne({where : {  id: dto.ownerId }})
-
         const parcel = this.parcelRepository.create({
           tracking_id: dto.tracking_id,
           flight_id: dto.flight_id,
