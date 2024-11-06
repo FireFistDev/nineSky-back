@@ -38,7 +38,7 @@ export class CreateParcelDto {
   flight_from: string; // New field for origin
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   arrived_at: string; // New field for arrival timestamp
 
   @IsOptional()

@@ -7,6 +7,7 @@ import { JwtStrategy } from 'libs/jwt/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtGuard } from 'libs/guards/Jwt.Auth.Guard';
 import { TransactionModule } from 'src/transaction/transaction.module';
+import { DeclarationModule } from 'src/declaration/declaration.module';
 
 
 @Module({
@@ -16,9 +17,10 @@ import { TransactionModule } from 'src/transaction/transaction.module';
     secret: process.env.JWT_SECRET, 
     signOptions: { expiresIn: '30d' },  
   }),
+  DeclarationModule
  ],
   controllers: [UserController],
-  providers: [UserService ,JwtStrategy, JwtGuard,],
+  providers: [UserService ,JwtStrategy, JwtGuard],
   exports: [UserService]
 })
 export class UserModule {}

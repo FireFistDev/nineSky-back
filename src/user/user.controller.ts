@@ -9,16 +9,16 @@ import { User } from 'libs/entities/user.entity';
 import { CreateTransactionDto } from 'src/transaction/dto/create-transaction.dto';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { CreateDeclarationDto } from 'src/declaration/dto/create-declaration.dto';
+import { DeclarationService } from 'src/declaration/declaration.service';
 
-@UseGuards(JwtGuard)
+// @UseGuards(JwtGuard)
 @Controller('user')
 
 export class UserController {
-  constructor(private readonly userService: UserService, private readonly TransactionService: TransactionService) { }
+  constructor(private readonly userService: UserService, private readonly TransactionService: TransactionService , private readonly declarationService : DeclarationService) { }
 
 //  profili tavis tranzaqciebit da amanatebbit 
-  @Get('profile')
-  @UseGuards(JwtGuard)
+  @Get('profile') 
   async getProfile(@GetUser() user : userPaylaod ) {
     const profile = await this.userService.findOne({ id : user.userId }); 
     return profile
@@ -32,8 +32,12 @@ export class UserController {
   @Post('declarate-parcel')
   @UseInterceptors(FileInterceptor('file'))
   async declarateParcel(@Body() body: CreateDeclarationDto, @UploadedFile() file: Express.Multer.File,) {
-    console.log(file)
-    console.log(body)
+    try {
+      console.log(file.buffer)
+      await this.declarationService.createDeclaration({...body, invoice_Pdf : file.buffer})
+    } catch (error) {
+      console.log(error)
+    }
   }
   
   
@@ -48,9 +52,7 @@ export class UserController {
   // }
 
 
-
   @Post('pay-parcels')
-  @UseGuards(JwtGuard)
   async payParcels(@GetUser() user: any, @Body() body: any) {
 
   }

@@ -10,18 +10,20 @@ import { CreateParcelDto } from './dto/create-parcel.dto';
 import { UpdateParcelDto } from './dto/update-parcel.dto';
 import { Parcel } from 'libs/entities/parcel.entity';
 import { UserService } from 'src/user/user.service';
+import { User } from 'libs/entities/user.entity';
 
 @Injectable()
 export class ParcelService {
   constructor(
-    private readonly userService: UserService,
+    @InjectRepository(Parcel)
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Parcel)
     private readonly parcelRepository: Repository<Parcel>,
   ) { }
 
   async create(createParcelDto: CreateParcelDto): Promise<Parcel> {
     try {
-      let owner = await this.userService.findOne({ id: createParcelDto.ownerId })
+      let owner = await this.userRepository.findOne({where: { id : createParcelDto.ownerId}})
       if (!owner) return owner = null
       const parcel = this.parcelRepository.create({ ...createParcelDto, owner });
       return await this.parcelRepository.save(parcel);
@@ -35,8 +37,8 @@ export class ParcelService {
       const parcels: Parcel[] = [];
 
       for (const dto of createParcelDtos) {
-        let owner = await this.userService.findOne({ id: dto.ownerId })
-        console.log(owner, dto.ownerId)
+        let owner = await this.userRepository.findOne({where : {  id: dto.ownerId }})
+
         const parcel = this.parcelRepository.create({
           tracking_id: dto.tracking_id,
           flight_id: dto.flight_id,

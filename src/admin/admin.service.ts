@@ -11,34 +11,34 @@ import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 
 
 @Injectable()
-export class AdminService  implements OnModuleInit  {
+export class AdminService implements OnModuleInit {
   constructor(
     private readonly parcelService: ParcelService,
-    private readonly userService : UserService,
-  ) {}
+    private readonly userService: UserService,
+  ) { }
   async onModuleInit() {
     try {
-      await this.userService.findOne({email :process.env.ADMIN_EMAIL })
-      } catch (error) {
-        await this.userService.create({
-          id: 1,
-          password: process.env.ADMIN_PASSWORD,
-          email: process.env.ADMIN_EMAIL,
-          first_name: 'ADMIN',
-          last_name: 'ADMINADZE',
-          phone_number: 123456789,
-          personal_number: '12345678910',
-          office: 'saburtalo',
-          city: 'tbilisi ',
-          address: 'tbilisi',
-          accessLevel: 3,
-        })
+      await this.userService.findOne({ email: process.env.ADMIN_EMAIL })
+    } catch (error) {
+      await this.userService.create({
+        id: 1,
+        password: process.env.ADMIN_PASSWORD,
+        email: process.env.ADMIN_EMAIL,
+        first_name: 'ADMIN',
+        last_name: 'ADMINADZE',
+        phone_number: 123456789,
+        personal_number: '12345678910',
+        office: 'saburtalo',
+        city: 'tbilisi ',
+        address: 'tbilisi',
+        accessLevel: 3,
+      })
     }
 
   }
 
 
-  async createParcels(createParcelDto : any[]){
+  async createParcels(createParcelDto: any[]) {
     try {
       return await this.parcelService.createMany(createParcelDto)
     } catch (error) {
@@ -46,42 +46,42 @@ export class AdminService  implements OnModuleInit  {
     }
 
   }
-  
-  async getParcels(data : getParcelDto) : Promise<{ parcels: Parcel[], totalPages: number, totalCount: number, currentPage: number }>{
+
+  async getParcels(data: getParcelDto): Promise<{ parcels: Parcel[], totalPages: number, totalCount: number, currentPage: number }> {
     try {
-      return  await this.parcelService.findAll(data)
+      return await this.parcelService.findAll(data)
     } catch (error) {
       throw new Error(error)
     }
   }
   async deleteParcel(id: string): Promise<void> {
-    try{
+    try {
 
       const result = await this.parcelService.remove(id);
-      } catch (error) {
+    } catch (error) {
       throw new Error(error)
     }
   }
   async updateParcel(id: string, updateParcelDto: UpdateParcelDto): Promise<Parcel> {
-    try{
+    try {
 
-    return await this.parcelService.update(id, updateParcelDto);
-  } catch (error) {
-    throw new Error(error)
+      return await this.parcelService.update(id, updateParcelDto);
+    } catch (error) {
+      throw new Error(error)
+    }
+
+  }
+  async getUsers(data: getUserDto) {
+    const users = this.userService.findAll(data)
+    return users;
   }
 
-}
- async getUsers(data :getUserDto ){
-  const users = this.userService.findAll(data)
-  return users;
- } 
+  async updateUser(id: string, data: UpdateUserDto) {
+    await this.userService.update(id, { ...UpdateUserDto })
+  }
 
- async updateUser(id : string, data : UpdateUserDto){
-  await this.userService.update(id,{...UpdateUserDto})
- }
+  async deleteUser(id: string) {
+    await this.userService.remove(id)
+  }
 
- async deleteUser(id : string){ 
-  await this.userService.remove(id)
- }
- 
 }
