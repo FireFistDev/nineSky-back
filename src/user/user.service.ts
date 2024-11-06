@@ -64,7 +64,7 @@ export class UserService {
 
       const user = await this.userRepository.findOne({
         where: criteria,
-        relations: ['transactions','parcels'],
+        relations: ['transactions','parcels', 'parcels.declaration'],
       });
       if (!user) {
         throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
