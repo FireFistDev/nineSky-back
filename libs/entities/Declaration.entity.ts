@@ -12,8 +12,7 @@ import { Parcel } from './parcel.entity';
 export class Declaration {
   @PrimaryGeneratedColumn()
   id: string;
-
-  @OneToOne(() => Parcel, (parcel) => parcel.declaration, { nullable: true })
+  @OneToOne(() => Parcel, (parcel) => parcel.declaration)
   parcel: Parcel;
   @Column()
   type: string;

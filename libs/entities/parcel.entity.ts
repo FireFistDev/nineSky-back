@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 import { ShippingStatus } from 'libs/enums/shipping.status.enum';
 import { Declaration } from './Declaration.entity';
@@ -8,7 +8,7 @@ import { PaymentType } from 'libs/enums/payment.status.enum';
 export class Parcel {
   @PrimaryGeneratedColumn()
   id : number;
-  @PrimaryColumn()
+  @Column({ unique: true })
   tracking_id: string;
   
   @Column()
@@ -43,7 +43,8 @@ export class Parcel {
   })
   payment_status: string;
 
-  @OneToOne(() => Declaration, (Declaration) => Declaration.parcel)
+  @OneToOne(() => Declaration, (Declaration) => Declaration.parcel,{ cascade: true })
+  @JoinColumn() 
   declaration: Declaration;
 
   @ManyToOne(() => User, (user) => user.parcels)

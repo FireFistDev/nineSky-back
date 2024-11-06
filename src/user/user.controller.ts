@@ -11,9 +11,8 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { CreateDeclarationDto } from 'src/declaration/dto/create-declaration.dto';
 import { DeclarationService } from 'src/declaration/declaration.service';
 
-// @UseGuards(JwtGuard)
+@UseGuards(JwtGuard)
 @Controller('user')
-
 export class UserController {
   constructor(private readonly userService: UserService, private readonly TransactionService: TransactionService , private readonly declarationService : DeclarationService) { }
 
@@ -29,15 +28,13 @@ export class UserController {
     return await this.userService.update(user.userId, body);
   }
   
+  //  deklaracia  form Data 
   @Post('declarate-parcel')
   @UseInterceptors(FileInterceptor('file'))
   async declarateParcel(@Body() body: CreateDeclarationDto, @UploadedFile() file: Express.Multer.File,) {
-    try {
-      console.log(file.buffer)
+
       await this.declarationService.createDeclaration({...body, invoice_Pdf : file.buffer})
-    } catch (error) {
-      console.log(error)
-    }
+
   }
   
   
@@ -52,8 +49,8 @@ export class UserController {
   // }
 
 
-  @Post('pay-parcels')
-  async payParcels(@GetUser() user: any, @Body() body: any) {
+  // @Post('pay-parcels')
+  // async payParcels(@GetUser() user: any, @Body() body: any) {
 
-  }
+  // }
 }

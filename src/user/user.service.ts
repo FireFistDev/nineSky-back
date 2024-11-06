@@ -13,6 +13,7 @@ export class UserService {
   ) { }
 
 
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
       const user = await this.userRepository.save(createUserDto);
@@ -25,30 +26,23 @@ export class UserService {
   async findAll(data: getUserDto): Promise<{ users: User[], totalPages: number, totalCount: number, currentPage: number }> {
     try {
         const {
-            personalNumber = '', // Default to empty string if not provided
-            page = 1,            // Default to 1 if not provided
-            limit = 10            // Default to 5 if not provided
+            personalNumber = '',
+            page = 1,            
+            limit = 10          
         } = data;
 
         const query = this.userRepository.createQueryBuilder('user')
             .leftJoin('user.parcels', 'parcel')
             .addSelect(['parcel.tracking_id']);
 
-        // Apply filter for personal number if provided
         if (personalNumber) {
             query.andWhere('user.personal_number = :personal_number', { personal_number: personalNumber });
         }
 
-        // Get total count of users before applying pagination
         const totalCount = await query.getCount();
 
-        // Set pagination
         query.skip((page - 1) * limit).take(limit);
-
-        // Fetch users and their related parcels
         const users = await query.getMany();
-
-        // Calculate total pages
         const totalPages = Math.ceil(totalCount / limit);
 
         return {

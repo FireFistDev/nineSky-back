@@ -3,7 +3,7 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateDeclarationDto {
   @IsString()
-  parcel_Id: string;
+  tracking_id: string;
   
   @IsNotEmpty()
   @IsString()

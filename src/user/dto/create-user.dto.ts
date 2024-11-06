@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, isEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Matches } from 'class-validator';
+import { IsEmail, IsEnum,  IsNotEmpty, IsNumber, IsOptional, IsString, Length, Matches } from 'class-validator';
 import { AccessLevel } from 'libs/enums/accese.levels.enum';
 
 export class CreateUserDto {

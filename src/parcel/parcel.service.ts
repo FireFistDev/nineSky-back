@@ -63,27 +63,23 @@ export class ParcelService {
   async findAll(_data: getParcelDto): Promise<{ parcels: Parcel[], totalPages: number, totalCount: number, currentPage: number }> {
     try {
         const {
-            tracking_id = '',  // Default to empty if not provided
-            owner = null,      // Default to null if not provided
-            page = 1,          // Default to 1 if not provided
-            limit = 10         // Default to 5 if not provided
+            tracking_id = '',
+            ownerId = null,     
+            page = 1,          
+            limit = 10         
         } = _data;
 
         const query = this.parcelRepository.createQueryBuilder('parcel')
-            .leftJoin('parcel.owner', 'owner')
-            .addSelect(['owner.id', 'owner.first_name', 'owner.last_name', 'owner.personal_number']);
-
-        // Apply filter for tracking ID if provided
+        .leftJoin('parcel.owner', 'owner')
+        .leftJoinAndSelect('parcel.declaration', 'declaration')
+        .addSelect(['owner.personal_number']);
         if (tracking_id) {
             query.andWhere('parcel.tracking_id = :tracking_id', { tracking_id });
         }
-
-        // Apply filter for owner ID if provided
-        if (owner) {
-            query.andWhere('parcel.ownerId = :ownerId', { ownerId: owner });
+        if (ownerId) {
+            query.andWhere('parcel.ownerId = :ownerId', { ownerId});
         }
 
-        // Get total count of parcels before applying pagination
         const totalCount = await query.getCount();
 
         // Set pagination

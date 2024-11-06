@@ -4,21 +4,16 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../libs/entities/user.entity';
-import { ParcelModule } from './parcel/parcel.module';
 import { Parcel } from 'libs/entities/parcel.entity';
 import { Declaration } from 'libs/entities/Declaration.entity';
 import { AdminModule } from './admin/admin.module';
-import { TransactionModule } from './transaction/transaction.module';
 import { Transaction } from 'libs/entities/transactions.entity';
-import { DeclarationModule } from './declaration/declaration.module';
 
 @Module({
   imports: [
     AuthModule,
     AdminModule,
     UserModule,
-    // DeclarationModule,
-    // ParcelModule,
     ConfigModule.forRoot({
       isGlobal: true, 
       envFilePath: '.env', 
