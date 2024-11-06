@@ -18,26 +18,25 @@ export class AdminService  implements OnModuleInit  {
   ) {}
   async onModuleInit() {
     try {
-      const admin = await this.userService.findOne({email :"akaki7600@gmail.com" })
-      
+      await this.userService.findOne({email :process.env.ADMIN_EMAIL })
       } catch (error) {
         await this.userService.create({
-          id: 9,
-          password: 'password',
-          email: 'akaki7600@gmail.com',
-          first_name: 'John',
-          last_name: 'Doe',
-          phone_number: 123467925,
-          personal_number: '1236378394',
+          id: 1,
+          password: process.env.ADMIN_PASSWORD,
+          email: process.env.ADMIN_EMAIL,
+          first_name: 'ADMIN',
+          last_name: 'ADMINADZE',
+          phone_number: 123456789,
+          personal_number: '12345678910',
           office: 'saburtalo',
           city: 'tbilisi ',
-          address: 'tbilisi2',
+          address: 'tbilisi',
           accessLevel: 3,
-          balance: 0,
         })
     }
 
   }
+
 
   async createParcels(createParcelDto : any[]){
     try {
@@ -55,7 +54,7 @@ export class AdminService  implements OnModuleInit  {
       throw new Error(error)
     }
   }
-  async deleteParcel(id: number): Promise<void> {
+  async deleteParcel(id: string): Promise<void> {
     try{
 
       const result = await this.parcelService.remove(id);

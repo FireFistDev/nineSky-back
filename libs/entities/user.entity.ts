@@ -33,6 +33,8 @@ export class User {
   transactions: Transaction[];
   @Column({ nullable: true ,  default: 0 })
   accessLevel: number;
+  level: number;
+  delete: any;
 
   get isAdmin(): boolean {
     return this.accessLevel >= AccessLevel.ADMIN;

@@ -36,7 +36,7 @@ import { DeclarationModule } from './declaration/declaration.module';
         entities: [User, Parcel,  Declaration, Transaction], 
         synchronize: true, 
         migrationsRun: true,
-        logging: true,
+        logging: false,
       }),
     }),
 

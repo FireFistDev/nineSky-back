@@ -28,7 +28,7 @@ export class UserService {
         const {
             personalNumber = '', // Default to empty string if not provided
             page = 1,            // Default to 1 if not provided
-            limit = 2            // Default to 5 if not provided
+            limit = 10            // Default to 5 if not provided
         } = data;
 
         const query = this.userRepository.createQueryBuilder('user')

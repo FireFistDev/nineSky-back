@@ -140,7 +140,7 @@ export class ParcelService {
       );
     }
   }
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     try {
       const result = await this.parcelRepository.delete(id);
 

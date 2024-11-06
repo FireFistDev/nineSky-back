@@ -23,30 +23,31 @@ export class UserController {
     const profile = await this.userService.findOne({ id : user.userId }); 
     return profile
   }
-
+//  profilis update
   @Post("update")
   async updateProfile(@GetUser() user : userPaylaod , @Body() body: any) {
     return await this.userService.update(user.userId, body);
   }
   
-  
-  @Post('deposite')
-  async updateBalance(@GetUser() user: any, @Body() body: any) {
-    const transactionData: CreateTransactionDto = {
-      userId: user.sub,
-      amount: body.amount,
-      transactionType: body.transactionType
-    }
-    return await this.TransactionService.create(transactionData)
-  }
-
   @Post('declarate-parcel')
   @UseInterceptors(FileInterceptor('file'))
-  // 
   async declarateParcel(@Body() body: CreateDeclarationDto, @UploadedFile() file: Express.Multer.File,) {
     console.log(file)
     console.log(body)
   }
+  
+  
+  // @Post('deposite')
+  // async updateBalance(@GetUser() user: any, @Body() body: any) {
+  //   const transactionData: CreateTransactionDto = {
+  //     userId: user.sub,
+  //     amount: body.amount,
+  //     transactionType: body.transactionType
+  //   }
+  //   return await this.TransactionService.create(transactionData)
+  // }
+
+
 
   @Post('pay-parcels')
   @UseGuards(JwtGuard)

@@ -13,7 +13,7 @@ export class JwtAdminGuard extends AuthGuard('jwt') {
         }
 
 
-        if (user.level > 3) {
+        if (user.level >= 3) {
             return true; 
         }
 
