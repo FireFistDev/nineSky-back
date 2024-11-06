@@ -35,7 +35,6 @@ export class ParcelService {
   async createMany(createParcelDtos: CreateParcelDto[]): Promise<Parcel[]> {
     try {
       const parcels: Parcel[] = [];
-
       for (const dto of createParcelDtos) {
         let owner = await this.userRepository.findOne({where : {  id: dto.ownerId }})
 
@@ -56,7 +55,7 @@ export class ParcelService {
 
       return await this.parcelRepository.save(parcels);
     } catch (error) {
-      throw new InternalServerErrorException('Failed to create parcels');
+      throw new InternalServerErrorException(error.message);
     }
   }
 

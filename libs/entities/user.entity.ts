@@ -18,7 +18,7 @@ export class User {
   @Column()
   last_name: string;
   @Column()
-  phone_number: number;
+  phone_number: string;
   @Column({ unique: true })
   personal_number: string;
   @Column()
@@ -31,11 +31,13 @@ export class User {
   parcels: Parcel[];  
   @OneToMany(() => Transaction, (transaction) => transaction.user)
   transactions: Transaction[];
-  @Column({ nullable: true ,  default: 0 })
-  accessLevel: number;
-  level: number;
-  delete: any;
-
+  @Column({
+    type: 'enum',
+    enum: AccessLevel,
+    default: AccessLevel.USER,
+  })
+  accessLevel: AccessLevel;
+  
   get isAdmin(): boolean {
     return this.accessLevel >= AccessLevel.ADMIN;
   }

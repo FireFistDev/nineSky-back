@@ -21,12 +21,11 @@ export class AdminService implements OnModuleInit {
       await this.userService.findOne({ email: process.env.ADMIN_EMAIL })
     } catch (error) {
       await this.userService.create({
-        id: 1,
         password: process.env.ADMIN_PASSWORD,
         email: process.env.ADMIN_EMAIL,
         first_name: 'ADMIN',
         last_name: 'ADMINADZE',
-        phone_number: 123456789,
+        phone_number: "123456789",
         personal_number: '12345678910',
         office: 'saburtalo',
         city: 'tbilisi ',
@@ -40,6 +39,7 @@ export class AdminService implements OnModuleInit {
 
   async createParcels(createParcelDto: any[]) {
     try {
+      
       return await this.parcelService.createMany(createParcelDto)
     } catch (error) {
       throw new Error(error)
