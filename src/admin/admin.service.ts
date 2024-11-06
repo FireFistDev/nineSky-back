@@ -77,7 +77,7 @@ export class AdminService implements OnModuleInit {
   }
 
   async updateUser(id: string, data: UpdateUserDto) {
-    await this.userService.update(id, { ...UpdateUserDto })
+    await this.userService.update(id, { ...data })
   }
 
   async deleteUser(id: string) {
