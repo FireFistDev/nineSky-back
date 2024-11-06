@@ -39,6 +39,7 @@ export class AuthService {
       if (!user || !passwordValid) {
         throw new UnauthorizedException('პაროლი ან  ელ-ფოსტა არასწორია.');
       }
+
       const payload = { username: user?.first_name, email: user.email, userId: user.id,level : user.accessLevel , isAdmin : user.isAdmin};
       return {
         access_token: this.jwtService.sign(payload),

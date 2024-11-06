@@ -25,7 +25,7 @@ export class UserController {
   }
 //  profilis update
   @Post("update")
-  async updateProfile(@GetUser() user : userPaylaod , @Body() body: any) {
+  async updateProfile(@GetUser() user : userPaylaod , @Body() body: UpdateUserDto) {
     return await this.userService.update(user.userId, body);
   }
   

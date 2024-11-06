@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadGatewayException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,8 +19,7 @@ export class UserService {
       console.log('User created:', user);
       return user;
     } catch (error) {
-      console.error('Error creating user:', error);
-      throw new Error(error.message);
+      throw new ConflictException(error.message)
     }
   }
   async findAll(data: getUserDto): Promise<{ users: User[], totalPages: number, totalCount: number, currentPage: number }> {
