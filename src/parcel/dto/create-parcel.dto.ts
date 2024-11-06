@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsEnum, IsNumber, IsString, IsOptional, ValidateIf, IsUUID } from 'class-validator';
+import { PaymentType } from 'libs/enums/payment.status.enum';
 import { ShippingStatus } from 'libs/enums/shipping.status.enum';
 
 export class CreateParcelDto {
@@ -25,9 +26,9 @@ export class CreateParcelDto {
   @IsOptional()
   shipping_status?: ShippingStatus;
 
-  @IsNotEmpty()
+  @IsEnum(PaymentType)
   @IsString()
-  payment_status: string;
+  payment_status?: PaymentType;
 
   @IsNotEmpty()
   @IsNumber()
@@ -41,15 +42,6 @@ export class CreateParcelDto {
   @IsString()
   arrived_at: string; // New field for arrival timestamp
 
-  @IsOptional()
-  @IsString()
-  description?: string; // Optional field for additional info
-
-  @IsOptional()
-  @IsString()
-  recipient_name?: string; // Optional field for recipient's name
-
   @IsNotEmpty()
-  @IsUUID() // Ensuring that user_id is a valid UUID
   ownerId: string;
 }
