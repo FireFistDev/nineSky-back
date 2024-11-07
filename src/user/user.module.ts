@@ -7,17 +7,17 @@ import { JwtStrategy } from 'libs/jwt/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtGuard } from 'libs/guards/Jwt.Auth.Guard';
 import { TransactionModule } from 'src/transaction/transaction.module';
-import { DeclarationModule } from 'src/declaration/declaration.module';
+import { Parcel } from 'libs/entities/parcel.entity';
+import { Declaration } from 'libs/entities/Declaration.entity';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), 
+  imports: [TypeOrmModule.forFeature([User ,Parcel, Declaration]), 
   TransactionModule,
   JwtModule.register({
     secret: process.env.JWT_SECRET, 
     signOptions: { expiresIn: '30d' },  
   }),
-  DeclarationModule
  ],
   controllers: [UserController],
   providers: [UserService ,JwtStrategy, JwtGuard],

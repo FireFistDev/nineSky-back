@@ -1,46 +1,39 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { Parcel } from './parcel.entity';
 import { AccessLevel } from 'libs/enums/accese.levels.enum';
 import { Transaction } from './transactions.entity';
 import { TransactionType } from 'libs/enums/transactions.enum';
+import { UserDetails } from './userDetails.entity';
 
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
+  
   @Column()
   password: string;
+
   @Column({ unique: true })
   email: string;
-  @Column()
-  first_name: string;
-  @Column()
-  last_name: string;
-  @Column()
-  phone_number: string;
-  @Column({ unique: true })
-  personal_number: string;
-  @Column()
-  office: string;
-  @Column()
-  city: string;
-  @Column()
-  address: string;
-  @OneToMany(() => Parcel, (parcel) => parcel.owner)
-  parcels: Parcel[];  
-  @OneToMany(() => Transaction, (transaction) => transaction.user)
-  transactions: Transaction[];
+
   @Column({
     type: 'enum',
     enum: AccessLevel,
     default: AccessLevel.USER,
   })
   accessLevel: AccessLevel;
+
+  @OneToOne(() => UserDetails, { cascade: true })
+  @JoinColumn()
+  userDetails: UserDetails;
+
+  @OneToMany(() => Parcel, (parcel) => parcel.owner)
+  parcels: Parcel[];
   
-  get isAdmin(): boolean {
-    return this.accessLevel >= AccessLevel.ADMIN;
-  }
+  @OneToMany(() => Transaction, (transaction) => transaction.user)
+  transactions: Transaction[];
+
   get balance(): number {
     const deposits = this.transactions
       .filter((transaction) => transaction.transactionType === TransactionType.DEPOSIT)

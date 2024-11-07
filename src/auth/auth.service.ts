@@ -3,44 +3,82 @@ import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from 'src/mailer/mailer.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'libs/entities/user.entity';
+import { EntityManager, Repository } from 'typeorm';
+import { UserDetails } from 'libs/entities/userDetails.entity';
 
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserDetails)
+    private readonly userDetailsRepository: Repository<UserDetails>,
     private readonly jwtService: JwtService,
+    private readonly entityManager: EntityManager, 
     private readonly mailerService: MailerService
   ) { }
   async register(registerDto: RegisterDto) {
     try {
-      const registeredUser = await this.userService.create(registerDto);
-      const payload = {email: registeredUser.email, sub: registeredUser.id, AccessLevel :registeredUser.accessLevel};
+      // Start a transaction using the entity manager
+      return await this.entityManager.transaction(async (transactionalEntityManager) => {
+        // Create UserDetails first
+        const userDetails = this.userDetailsRepository.create({
+          first_name: registerDto.first_name,
+          last_name: registerDto.last_name,
+          phone_number: registerDto.phone_number,
+          personal_number: registerDto.personal_number,
+          office: registerDto.office,
+          city: registerDto.city,
+          address: registerDto.address,
+        });
 
-      return {
-        access_token: this.jwtService.sign(payload),
-      };
+        const savedUserDetails = await transactionalEntityManager.save(userDetails);
+
+        const user = this.userRepository.create({
+          email: registerDto.email,
+          password: registerDto.password, // Make sure to hash this password before saving!
+          userDetails: savedUserDetails,
+        });
+
+        const createdUser = await transactionalEntityManager.save(user);
+
+        const payload = {
+          email: createdUser.email,
+          sub: createdUser.id,
+          AccessLevel: createdUser.accessLevel, // Make sure `accessLevel` exists on your User entity
+        };
+
+        return {
+          access_token: this.jwtService.sign(payload),
+        };
+      });
     } catch (error) {
 
-      if (error instanceof ConflictException) {
-        throw error;
-      } else {
-        throw new InternalServerErrorException('Failed to register user.');
+      if (error.message) {
+        throw new ConflictException(error.message);
       }
+      throw new InternalServerErrorException('Failed to register user.');
     }
   }
 
   async login(loginDto: LoginDto) {
     try {
       const { email, password } = loginDto;
-      const user = await this.userService.findOne({ email });
+      const user = await this.userRepository.findOne({ where : {email } });
       // const passwordValid = await bcrypt.compare(password, user.password);
       const passwordValid = password
       if (!user || !passwordValid) {
         throw new UnauthorizedException('პაროლი ან  ელ-ფოსტა არასწორია.');
       }
+      const payload = {
+        email: user.email,
+        sub: user.id,
+        AccessLevel: user.accessLevel, // Make sure `accessLevel` exists on your User entity
+      };
 
-      const payload = { username: user?.first_name, email: user.email, userId: user.id,level : user.accessLevel , isAdmin : user.isAdmin};
       return {
         access_token: this.jwtService.sign(payload),
       };
@@ -53,7 +91,7 @@ export class AuthService {
   }
 
   async forgetPassword(email: string) {
-    const user = await this.userService.findOne({ email });
+    const user = await this.userRepository.findOne({ where : {email } });
     if (!user) {
       throw new NotFoundException('მომხმარებელი ამ ელ-ფოსტით ვერ მოიძებნა.');
     }

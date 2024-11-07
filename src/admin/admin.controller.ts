@@ -1,9 +1,8 @@
 import { Controller, Get, Post, Body, Param, Delete,  Query, Put, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
-
-import { UpdateParcelDto } from 'src/parcel/dto/update-parcel.dto';
-
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { UploadParcelsDto } from 'libs/dtos/parcelDtos.ts/UploadParcelsDto';
+import { UpdateParcelDto } from 'libs/dtos/parcelDtos.ts/update-parcel.dto';
 
 // @UseGuards(JwtAdminGuard)
 @Controller('admin')
@@ -13,14 +12,14 @@ export class AdminController {
   //  amanatebis sheqmna 
 
   @Post('/create-parcels')
-  createParcels(@Body() createParcelDto: any) {
-    return this.adminService.createParcels(createParcelDto)
+  uploadParcels(@Body() body: UploadParcelsDto) {
+    return this.adminService.uploadParcels(body)
   }
   // amanatebis modzebna 
 
   @Get('/get-parcels')
   getParcels(@Query() data : getParcelDto) {
-    return this.adminService.getParcels(data)
+    return this.adminService.getAllParcel(data)
   }
 
 //  amanatebis washla 

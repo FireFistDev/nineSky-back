@@ -1,39 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Req, UseInterceptors, UploadedFiles, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtGuard } from 'libs/guards/Jwt.Auth.Guard';
-import { TransactionService } from 'src/transaction/transaction.service';
 import { GetUser } from 'libs/decorators/getUser';
-import { User } from 'libs/entities/user.entity';
-import { CreateTransactionDto } from 'src/transaction/dto/create-transaction.dto';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { CreateDeclarationDto } from 'src/declaration/dto/create-declaration.dto';
-import { DeclarationService } from 'src/declaration/declaration.service';
+import { CreateDeclarationDto } from 'libs/dtos/declarationDtos.ts/createDeclarationDto';
 
-@UseGuards(JwtGuard)
+
+// @UseGuards(JwtGuard)
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService, private readonly TransactionService: TransactionService , private readonly declarationService : DeclarationService) { }
+  constructor(private readonly userService: UserService) { }
 
 //  profili tavis tranzaqciebit da amanatebbit 
   @Get('profile') 
   async getProfile(@GetUser() user : userPaylaod ) {
-    const profile = await this.userService.findOne({ id : user.userId }); 
-    return profile
+    console.log(user.sub)
+    return  await this.userService.getProfile(user.sub); 
   }
 //  profilis update
   @Post("update")
   async updateProfile(@GetUser() user : userPaylaod , @Body() body: UpdateUserDto) {
-    return await this.userService.update(user.userId, body);
+    return await this.userService.updateProfile(user.sub, body);
   }
-  
-  //  deklaracia  form Data 
+
+  // //  deklaracia  form Data 
   @Post('declarate-parcel')
   @UseInterceptors(FileInterceptor('file'))
   async declarateParcel(@Body() body: CreateDeclarationDto, @UploadedFile() file: Express.Multer.File,) {
 
-      await this.declarationService.createDeclaration({...body, invoice_Pdf : file.buffer})
+      return await this.userService.createDeclaration({...body, invoice_Pdf : file.buffer})
+
 
   }
   

@@ -1,26 +1,20 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Parcel } from './parcel.entity';
 
 @Entity()
 export class Declaration {
   @PrimaryGeneratedColumn()
   id: string;
-  @OneToOne(() => Parcel, (parcel) => parcel.declaration)
-  parcel: Parcel;
+
   @Column()
   type: string;
 
   @Column()
   price: string;
   @Column()
-
   website: string;
 
   @Column('text', { nullable: true })

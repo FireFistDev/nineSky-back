@@ -4,108 +4,95 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../libs/entities/user.entity';
 import { Repository } from 'typeorm';
+import { Parcel } from 'libs/entities/parcel.entity';
+import { Declaration } from 'libs/entities/Declaration.entity';
+import { CreateDeclarationDto } from 'libs/dtos/declarationDtos.ts/createDeclarationDto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) { }
+    @InjectRepository(Parcel)
+    private parcelRepository: Repository<Parcel>,
+    @InjectRepository(Declaration)
+    private declarationRepository: Repository<Declaration>,
+  ) {}
 
-
-
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    try {
-      const user = await this.userRepository.save(createUserDto);
-      console.log('User created:', user);
-      return user;
-    } catch (error) {
-      throw new ConflictException(error.message)
-    }
-  }
-  async findAll(data: getUserDto): Promise<{ users: User[], totalPages: number, totalCount: number, currentPage: number }> {
-    try {
-        const {
-            personalNumber = '',
-            page = 1,            
-            limit = 10          
-        } = data;
-
-        const query = this.userRepository.createQueryBuilder('user')
-            .leftJoin('user.parcels', 'parcel')
-            .addSelect(['parcel.tracking_id']);
-
-        if (personalNumber) {
-            query.andWhere('user.personal_number = :personal_number', { personal_number: personalNumber });
-        }
-
-        const totalCount = await query.getCount();
-
-        query.skip((page - 1) * limit).take(limit);
-        const users = await query.getMany();
-        const totalPages = Math.ceil(totalCount / limit);
-
-        return {
-            users,
-            totalPages,
-            totalCount,
-            currentPage: page
-        };
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        throw new Error('Failed to fetch users');
-    }
-}
-
-
-  async findOne(criteria: { [key: string]: any }){
+  async getProfile(id : string ){
 
     try {
-
       const user = await this.userRepository.findOne({
-        where: criteria,
-        relations: ['transactions','parcels', 'parcels.declaration'],
+        where: {id},
+        relations: ['transactions','parcels', 'parcels.declaration', 'userDetails'],
       });
       if (!user) {
         throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
       }
+      return user;
       
-      return { ...user, balance: user.balance, isAdmin: user.isAdmin }
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message)
-
-      }
-      throw new InternalServerErrorException('Internal server error.');
+      throw new NotFoundException(error.message);
+    }
 
     }
-  }
 
-  async update(id: string, updateUserDto: any): Promise<any> {
-    try {
-      console.log('Updating user with ID:', id);  // Add this line
-      const user = await this.userRepository.findOneBy({ id });
-      if (!user) {
-        throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
-      }
-      await this.userRepository.update(id, updateUserDto);
-      return await this.userRepository.findOneBy({ id });
-    } catch (error) {
-      console.error('Error updating user:', error);
-      throw new InternalServerErrorException('Internal server error.');
+    async updateProfile(id: string, data: UpdateUserDto) {
+      const { email , password  , first_name , last_name , phone_number, city , address} = data;
+      const user = await this.userRepository.findOne({
+        where: { id },
+        relations: ['userDetails'], // Ensures userDetails are loaded
+  
+      });
+      const createdUser =  this.userRepository.create({email,password,userDetails : {first_name, last_name,phone_number,city,address}})
+      await this.userRepository.save(createdUser);
+      return user;
     }
-  }
 
-  async remove(id: string): Promise<void> {
-    try {
-      const user = await this.userRepository.findOneBy({ id });
-      if (!user) {
-        throw new Error(`User with ID ${id} not found`);
-      }
-      await this.userRepository.delete(id);
-    } catch (error) {
-      console.error('Error removing user:', error);
-      throw new Error(error.message);
+    
+    async createDeclaration(createDeclarationDto: CreateDeclarationDto) {
+      try {
+        const { type, price, website, comment, invoice_Pdf, tracking_id } = createDeclarationDto;
+        console.log(createDeclarationDto)
+        const parcel = await this.parcelRepository.findOne({ where: { tracking_id } });
+        const declaration = this.declarationRepository.create({
+          type,
+          price,
+          website,
+          comment: comment || null,
+          invoice_Pdf: invoice_Pdf || null,
+        });
+        const savedDeclaration = await this.declarationRepository.save(declaration);
+        parcel.declaration = savedDeclaration;
+        await this.parcelRepository.save(parcel);
+        return savedDeclaration;
+      } catch(error) {
+  
     }
-  }
+    }
+
+  // async findOne(criteria: { [key: string]: any }){
+
+  //   try {
+
+  //     const user = await this.userRepository.findOne({
+  //       where: criteria,
+  //       relations: ['transactions','parcels', 'parcels.declaration'],
+  //     });
+  //     if (!user) {
+  //       throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
+  //     }
+      
+  //     return { ...user, balance: user.balance, }
+  //   } catch (error) {
+  //     if (error instanceof NotFoundException) {
+  //       throw new NotFoundException(error.message)
+
+  //     }
+  //     throw new InternalServerErrorException('Internal server error.');
+
+  //   }
+  
+ 
+
 }

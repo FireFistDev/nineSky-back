@@ -8,6 +8,8 @@ import { Parcel } from 'libs/entities/parcel.entity';
 import { Declaration } from 'libs/entities/Declaration.entity';
 import { AdminModule } from './admin/admin.module';
 import { Transaction } from 'libs/entities/transactions.entity';
+import { UserDetails } from 'libs/entities/userDetails.entity';
+import { Flight } from 'libs/entities/flight.entity';
 
 @Module({
   imports: [
@@ -28,7 +30,7 @@ import { Transaction } from 'libs/entities/transactions.entity';
         username: configService.get<string>('POSTGRES_USER'),
         password: configService.get<string>('POSTGRES_PASSWORD'),
         database: configService.get<string>('POSTGRES_DB'),
-        entities: [User, Parcel,  Declaration, Transaction], 
+        entities: [User, Parcel,  Declaration, Transaction, UserDetails, Flight], 
         synchronize: true, 
         migrationsRun: true,
         logging: false,

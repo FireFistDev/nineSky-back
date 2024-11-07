@@ -14,7 +14,6 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
     if (!canActivate || !user) {
         throw new UnauthorizedException('User not authorized or token is invalid');
     }
-    
         return true; 
   
 }
