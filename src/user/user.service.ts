@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../libs/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Parcel } from 'libs/entities/parcel.entity';
-import { Declaration } from 'libs/entities/Declaration.entity';
+import { Declaration } from 'libs/entities/declaration.entity';
 import { CreateDeclarationDto } from 'libs/dtos/declarationDtos.ts/createDeclarationDto';
 
 @Injectable()

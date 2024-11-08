@@ -5,11 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../libs/entities/user.entity';
 import { Parcel } from 'libs/entities/parcel.entity';
-import { Declaration } from 'libs/entities/Declaration.entity';
+import { Declaration } from 'libs/entities/declaration.entity';
 import { AdminModule } from './admin/admin.module';
 import { Transaction } from 'libs/entities/transactions.entity';
 import { UserDetails } from 'libs/entities/userDetails.entity';
 import { Flight } from 'libs/entities/flight.entity';
+import { Price } from 'libs/entities/prices.entity';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { Flight } from 'libs/entities/flight.entity';
         username: configService.get<string>('POSTGRES_USER'),
         password: configService.get<string>('POSTGRES_PASSWORD'),
         database: configService.get<string>('POSTGRES_DB'),
-        entities: [User, Parcel,  Declaration, Transaction, UserDetails, Flight], 
+        entities: [User, Parcel,  Declaration, Transaction, UserDetails, Flight, Price], 
         synchronize: true, 
         migrationsRun: true,
         logging: false,

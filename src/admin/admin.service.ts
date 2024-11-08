@@ -6,9 +6,11 @@ import { Parcel } from 'libs/entities/parcel.entity';
 
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { Flight } from 'libs/entities/flight.entity';
-import { CreateFlightDto, UploadParcelsDto } from 'libs/dtos/parcelDtos.ts/UploadParcelsDto';
+import {UploadParcelsDto } from 'libs/dtos/parcelDtos.ts/UploadParcelsDto';
 import { error } from 'console';
 import { UpdateParcelDto } from 'libs/dtos/parcelDtos.ts/update-parcel.dto';
+import { Price } from 'libs/entities/prices.entity';
+import { CreateFlightDto } from 'libs/dtos/flightDtos/createFlightDto';
 
 
 @Injectable()
@@ -21,6 +23,8 @@ export class AdminService implements OnModuleInit {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Parcel)
     private readonly parcelRepository: Repository<Parcel>,
+    @InjectRepository(Price)
+    private readonly PriceRepository: Repository<Price>,
   ) { }
 
   async onModuleInit() {
@@ -34,6 +38,11 @@ export class AdminService implements OnModuleInit {
         })
         await this.userRepository.save(admin)
       }
+      let price =await this.PriceRepository.findOne({where : { id : "1" }})
+      if(!price){
+         const price =  this.PriceRepository.create({China: 9.90, Turkey: 3.00})
+        await this.PriceRepository.save(price)
+      } 
     
   }
   async uploadParcels(data :UploadParcelsDto) {
@@ -42,12 +51,15 @@ export class AdminService implements OnModuleInit {
       if(!createdFlight){
         throw new error('wrong with flight')
       }
+      console.log(createdFlight)
+      let price =await this.PriceRepository.findOne({where : { id : "1" }})
+      console.log(price)
       const parcels: Parcel[] = [];
       for (const parcel of data.parcels) {
         let owner = await this.userRepository.findOne({where : {  id: parcel.ownerId }})
         const createdParcel = this.parcelRepository.create({
           tracking_id: parcel.tracking_id,
-          price: 100,  
+          price: createdFlight.flight_from === 'china' ? parcel.weight * price.China : parcel.weight * price.Turkey,  
           owner: owner ? owner : null,
           weight: parcel.weight,
           flight : createdFlight,
@@ -67,6 +79,8 @@ export class AdminService implements OnModuleInit {
       if (existingFlight) {
         return existingFlight;
       }
+      console.log(createFlightDto)
+    
       const flight = this.flightRepositry.create(createFlightDto)
       return await this.flightRepositry.save(flight)
 

@@ -1,20 +1,9 @@
 import { IsNotEmpty, IsEnum, IsString, IsOptional, IsObject, ValidateNested } from 'class-validator';
 import { Type as TransformType } from 'class-transformer'; // For nested objects validation
 import { CreateParcelDto } from './create-parcel.dto';
+import { FlightFrom } from 'libs/enums/flightsFrom.enum';
+import { CreateFlightDto } from '../flightDtos/createFlightDto';
   // Assuming CreateParcelDto is also imported correctly
-export class CreateFlightDto {
-    @IsNotEmpty()
-    @IsString() // Changed to IsString as flight_id is usually a string
-    flight_id: string;
-  
-    @IsOptional()
-    @IsString()
-    flight_from?: string; // New field for origin
-  
-    @IsOptional()
-    @IsString()
-    arrived_at?: string; // New field for arrival timestamp
-  }
 export class UploadParcelsDto {
   @IsObject()
   @ValidateNested() // Ensures the nested object is validated

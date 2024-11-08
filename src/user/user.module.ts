@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtGuard } from 'libs/guards/Jwt.Auth.Guard';
 import { TransactionModule } from 'src/transaction/transaction.module';
 import { Parcel } from 'libs/entities/parcel.entity';
-import { Declaration } from 'libs/entities/Declaration.entity';
+import { Declaration } from 'libs/entities/declaration.entity';
 
 
 @Module({
