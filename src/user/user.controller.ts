@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, UseInterceptors, UploadedFile } from '@nes
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtGuard } from 'libs/guards/Jwt.Auth.Guard';
+import { JwtGuard } from 'libs/payloads/Jwt.Auth.Guard';
 import { GetUser } from 'libs/decorators/getUser';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { CreateDeclarationDto } from 'libs/dtos/declarationDtos.ts/createDeclarationDto';

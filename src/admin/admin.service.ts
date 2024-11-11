@@ -39,9 +39,9 @@ export class AdminService implements OnModuleInit {
         })
         await this.userRepository.save(admin)
       }
-      let price =await this.PriceRepository.findOne({where : { id : "1" }})
+      let price =await this.PriceRepository.findOne({where : { id : process.env.PRICE_ID }})
       if(!price){
-         const price =  this.PriceRepository.create({China: 9.90, Turkey: 3.00})
+         const price =  this.PriceRepository.create({ id : process.env.PRICE_ID, China: 9.90, Turkey: 3.00})
         await this.PriceRepository.save(price)
       } 
     
@@ -227,7 +227,7 @@ export class AdminService implements OnModuleInit {
       user.userDetails.office = office ?? user.userDetails.office;
       const updatedUser = await this.userRepository.save(user);
       return updatedUser
-      
+
   }
 
   
