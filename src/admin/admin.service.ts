@@ -1,4 +1,4 @@
-import {  Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
+import {  ConflictException, Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'libs/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -11,6 +11,7 @@ import { error } from 'console';
 import { UpdateParcelDto } from 'libs/dtos/parcelDtos.ts/update-parcel.dto';
 import { Price } from 'libs/entities/prices.entity';
 import { CreateFlightDto } from 'libs/dtos/flightDtos/createFlightDto';
+import { use } from 'passport';
 
 
 @Injectable()
@@ -47,28 +48,39 @@ export class AdminService implements OnModuleInit {
   }
   async uploadParcels(data :UploadParcelsDto) {
     try {
-      const createdFlight = await this.createFlight(data.flight_info)
-      if(!createdFlight){
-        throw new error('wrong with flight')
+      const Flight = await this.createFlight(data.flight_info)
+      if(!Flight){
+        throw new ConflictException(`problem with flight`)
       }
-      console.log(createdFlight)
-      let price =await this.PriceRepository.findOne({where : { id : "1" }})
-      console.log(price)
+      const price = await this.PriceRepository.findOne({where : { id : "1" }})
+      if(!Flight){
+        throw new NotFoundException(`Prices not found`)
+      }
+
       const parcels: Parcel[] = [];
+
       for (const parcel of data.parcels) {
         let owner = await this.userRepository.findOne({where : {  id: parcel.ownerId }})
+        if(!owner){
+          throw new ConflictException(`owoner with this id ${parcel.ownerId} does not exist`)
+        }
         const createdParcel = this.parcelRepository.create({
           tracking_id: parcel.tracking_id,
-          price: createdFlight.flight_from === 'china' ? parcel.weight * price.China : parcel.weight * price.Turkey,  
+          price: Flight.flight_from === 'china' ? parcel.weight * price.China : parcel.weight * price.Turkey,  
           owner: owner ? owner : null,
           weight: parcel.weight,
-          flight : createdFlight,
+          flight : Flight,
         })
         parcels.push(createdParcel);
       }
-      return await this.parcelRepository.save(parcels);
+      const createdParcel =  await this.parcelRepository.save(parcels);
+      if(!createdParcel){
+        throw new ConflictException(createdParcel)
+      }
+      return createdParcel
     } catch (error) {
-      throw new Error(error)
+      throw new ConflictException(error.message);
+    
     }
 
   }
@@ -79,10 +91,8 @@ export class AdminService implements OnModuleInit {
       if (existingFlight) {
         return existingFlight;
       }
-      console.log(createFlightDto)
-    
-      const flight = this.flightRepositry.create(createFlightDto)
-      return await this.flightRepositry.save(flight)
+      const newFlight = this.flightRepositry.create(createFlightDto)
+      return await this.flightRepositry.save(newFlight)
 
   }
 
@@ -125,7 +135,6 @@ export class AdminService implements OnModuleInit {
             currentPage: page
         };
     } catch (error) {
-        console.error('Error fetching parcels:', error);
         throw new InternalServerErrorException('Failed to retrieve parcels');
     }
 }
@@ -142,12 +151,12 @@ export class AdminService implements OnModuleInit {
 
       return await this.parcelRepository.save(parcel);
     } catch (error) {
-      console.error(error); // Log the error for debugging
       throw new InternalServerErrorException(
         `Failed to update parcel with ID ${id}: ${error.message}`,
       );
     }
   }
+
   async deleteParcel(id: string): Promise<void> {
     try {
       const result = await this.parcelRepository.delete(id);
@@ -196,16 +205,32 @@ export class AdminService implements OnModuleInit {
     }
 }
   async updateUser(id: string, data: UpdateUserDto) {
-    const { email , password  , first_name , last_name , phone_number, city , address} = data;
+    const { email, password, first_name, last_name, phone_number, city, address ,office , personal_number } = data;
     const user = await this.userRepository.findOne({
       where: { id },
       relations: ['userDetails'], // Ensures userDetails are loaded
 
     });
-    const createdUser =  this.userRepository.create({email,password,userDetails : {first_name, last_name,phone_number,city,address}})
-    await this.userRepository.save(createdUser);
-    return user;
+
+    if (!user) {
+      throw new Error(`User with ID ${id} not found.`);
+    }
+
+    user.email = email ?? user.email;
+    user.password = password ?? user.password;
+      user.userDetails.first_name = first_name ?? user.userDetails.first_name;
+      user.userDetails.last_name = last_name ?? user.userDetails.last_name;
+      user.userDetails.phone_number = phone_number ?? user.userDetails.phone_number;
+      user.userDetails.city = city ?? user.userDetails.city;
+      user.userDetails.address = address ?? user.userDetails.address;
+      user.userDetails.personal_number = personal_number ?? user.userDetails.personal_number;
+      user.userDetails.office = office ?? user.userDetails.office;
+      const updatedUser = await this.userRepository.save(user);
+      return updatedUser
+      
   }
+
+  
 
   async deleteUser(id: string): Promise<void> {
     try {

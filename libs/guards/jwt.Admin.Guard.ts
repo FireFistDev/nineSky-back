@@ -7,13 +7,13 @@ export class JwtAdminGuard extends AuthGuard('jwt') {
         const request = context.switchToHttp().getRequest();
         const canActivate = await super.canActivate(context) as boolean;
 
-        const user = request.user;
+        const user : userPaylaod = request.user;
         if (!canActivate || !user) {
             throw new UnauthorizedException('User not authorized or token is invalid');
         }
 
 
-        if (user.level >= 3) {
+        if (user.accessLevel >= 3) {
             return true; 
         }
 

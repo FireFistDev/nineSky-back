@@ -1,7 +1,7 @@
 class userPaylaod {
     email: string
     sub:  string
-    level: number
+    accessLevel?: number
     iat ? : number
     exp ? : number
   }

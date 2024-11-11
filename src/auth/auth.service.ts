@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'libs/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { UserDetails } from 'libs/entities/userDetails.entity';
-
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +24,6 @@ export class AuthService {
     try {
       // Start a transaction using the entity manager
       return await this.entityManager.transaction(async (transactionalEntityManager) => {
-        // Create UserDetails first
         const userDetails = this.userDetailsRepository.create({
           first_name: registerDto.first_name,
           last_name: registerDto.last_name,
@@ -58,7 +57,7 @@ export class AuthService {
     } catch (error) {
 
       if (error.message) {
-        throw new ConflictException(error.message);
+        throw new ConflictException(error.detail);
       }
       throw new InternalServerErrorException('Failed to register user.');
     }
@@ -68,15 +67,15 @@ export class AuthService {
     try {
       const { email, password } = loginDto;
       const user = await this.userRepository.findOne({ where : {email } });
-      // const passwordValid = await bcrypt.compare(password, user.password);
-      const passwordValid = password
+      let passwordValid = await bcrypt.compare(password, user.password);
+      // passwordValid = password
       if (!user || !passwordValid) {
         throw new UnauthorizedException('პაროლი ან  ელ-ფოსტა არასწორია.');
       }
       const payload = {
         email: user.email,
         sub: user.id,
-        AccessLevel: user.accessLevel, // Make sure `accessLevel` exists on your User entity
+        AccessLevel: user.accessLevel
       };
 
       return {
@@ -84,7 +83,7 @@ export class AuthService {
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
-        throw error
+        throw new  UnauthorizedException(error.message)
       }
       throw new InternalServerErrorException('Login failed.');
     }
@@ -95,7 +94,11 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('მომხმარებელი ამ ელ-ფოსტით ვერ მოიძებნა.');
     }
-    const payload = { email: user.email, sub: user.id };
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      AccessLevel: user.accessLevel,
+    };
     const resetToken = this.jwtService.sign(payload);
 
     await this.mailerService.sendActivationEmail(resetToken, user.email);

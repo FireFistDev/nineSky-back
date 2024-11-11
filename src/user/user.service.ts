@@ -38,13 +38,14 @@ export class UserService {
     }
 
     async updateProfile(id: string, data: UpdateUserDto) {
-      const { email , password  , first_name , last_name , phone_number, city , address} = data;
+      const { email , password,personal_number ,office , first_name , last_name , phone_number, city , address} = data;
+      console.log(data)
       const user = await this.userRepository.findOne({
         where: { id },
         relations: ['userDetails'], // Ensures userDetails are loaded
   
       });
-      const createdUser =  this.userRepository.create({email,password,userDetails : {first_name, last_name,phone_number,city,address}})
+      const createdUser =  this.userRepository.create({email,password,userDetails : {first_name, office,personal_number,last_name,phone_number,city,address}})
       await this.userRepository.save(createdUser);
       return user;
     }
