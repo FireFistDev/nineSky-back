@@ -98,21 +98,42 @@ export class UserService {
      }
     }
 
-    async payParcels(userId : string ,parcels : { tracking_id : string}[]){
-
-      const user = await this.userRepository.findOne({ where: { id: userId } });
-
-      const pricesList = await Promise.all(parcels.map(async parcel => {
+    async payParcels(userId: string, parcels: { tracking_id: string }[]) {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['transactions'],
+      });
+    
+      // Calculate the total price of the parcels
+      const pricesList = await Promise.all(parcels.map(async (parcel) => {
         const mainParcel = await this.parcelRepository.findOne({ where: { id: parcel.tracking_id } });
-        if (mainParcel.payment_status === PaymentType.PAID) return 0;  // If paid, no charge
-        return mainParcel.price;
+        if (mainParcel) {
+          mainParcel.payment_status = PaymentType.PAID; // Update status to PAID
+          await this.parcelRepository.save(mainParcel);  // Save updated parcel
+          return mainParcel.price;
+        }
+        return 0; // If parcel is not found, return 0 to avoid errors in calculation
       }));
-      const totalPrice = pricesList.reduce((acc, price) => acc + price, 0); 
-      if (user.balance <= totalPrice) {
-        console.log('User has sufficient balance');
+    
+      const totalPrice = pricesList.reduce((acc, price) => acc + price, 0);
+    
+      // Check if the user has sufficient balance
+      if (user.balance < totalPrice) {
+        console.log('User does not have sufficient balance');
+        return;  // Exit the function if the user doesn't have enough balance
       }
-      const createTransaction = this.TransactionRepository.create({ amount: totalPrice, date: new Date,transactionType : TransactionType.PAYMENT, user })
-      await this.TransactionRepository.save(createTransaction)
+    
+      // Proceed with the transaction if balance is sufficient
+      const createTransaction = this.TransactionRepository.create({
+        amount: totalPrice,
+        date: new Date(), // Ensure the date is properly created
+        transactionType: TransactionType.PAYMENT,
+        user,
+      });
+    
+      // Save the transaction
+      await this.TransactionRepository.save(createTransaction);
+    
     }
 
   // async findOne(criteria: { [key: string]: any }){

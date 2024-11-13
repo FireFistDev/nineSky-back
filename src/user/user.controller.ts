@@ -40,7 +40,7 @@ export class UserController {
   }
 
   @Post('pay-parcels')
-  async payParcels(@GetUser() user: userPaylaod, @Body() body: [{tracking_id:string}]) {
+  async payParcels(@GetUser() user: userPaylaod, @Body() body: {tracking_id:string}[]) {
     return this.userService.payParcels(user.sub, body)
   }
   
