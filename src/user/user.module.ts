@@ -9,10 +9,11 @@ import { JwtGuard } from 'libs/guards/Jwt.Auth.Guard';
 import { TransactionModule } from 'src/transaction/transaction.module';
 import { Parcel } from 'libs/entities/parcel.entity';
 import { Declaration } from 'libs/entities/declaration.entity';
+import { Transaction } from 'libs/entities/transactions.entity';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User ,Parcel, Declaration]), 
+  imports: [TypeOrmModule.forFeature([User ,Parcel, Declaration,Transaction]), 
   TransactionModule,
  ],
   controllers: [UserController],

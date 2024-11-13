@@ -33,21 +33,19 @@ export class UserController {
 
 
   }
+
+    @Post('deposite')
+  async updateBalance(@GetUser() user: userPaylaod, @Body() body: {amount: number}) {
+     return this.userService.depositeBalance(user.sub, body)
+  }
+
+  @Post('pay-parcels')
+  async payParcels(@GetUser() user: userPaylaod, @Body() body: [{tracking_id:string}]) {
+    return this.userService.payParcels(user.sub, body)
+  }
   
   
-  // @Post('deposite')
-  // async updateBalance(@GetUser() user: any, @Body() body: any) {
-  //   const transactionData: CreateTransactionDto = {
-  //     userId: user.sub,
-  //     amount: body.amount,
-  //     transactionType: body.transactionType
-  //   }
-  //   return await this.TransactionService.create(transactionData)
-  // }
 
 
-  // @Post('pay-parcels')
-  // async payParcels(@GetUser() user: any, @Body() body: any) {
 
-  // }
 }

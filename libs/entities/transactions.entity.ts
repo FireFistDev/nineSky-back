@@ -15,11 +15,9 @@ export class Transaction {
     enum: TransactionType,
   })
   transactionType: TransactionType;
-  @Column()
-  userId: string; 
 
   @ManyToOne(() => User, (user) => user.transactions, { eager: false })
-  @JoinColumn({ name: 'userId' }) 
+  @JoinColumn() 
   user: User;
 
   @CreateDateColumn()

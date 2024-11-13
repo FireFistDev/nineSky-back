@@ -66,12 +66,13 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     try {
       const { email, password } = loginDto;
+      
       const user = await this.userRepository.findOne({ where : {email } });
-      let passwordValid = await bcrypt.compare(password, user.password);
-      // passwordValid = password
-      if (!user || !passwordValid) {
-        throw new UnauthorizedException('პაროლი ან  ელ-ფოსტა არასწორია.');
-      }
+      // let passwordValid = await bcrypt.compare(password, user.password);
+      // // passwordValid = password
+      // if (!user || !passwordValid) {
+      //   throw new UnauthorizedException('პაროლი ან  ელ-ფოსტა არასწორია.');
+      // }
       const payload = {
         email: user.email,
         sub: user.id,

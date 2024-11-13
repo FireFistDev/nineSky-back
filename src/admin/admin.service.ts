@@ -7,11 +7,9 @@ import { Parcel } from 'libs/entities/parcel.entity';
 import { UpdateUserDto } from 'libs/dtos/UserDto.ts/update-user.dto';
 import { Flight } from 'libs/entities/flight.entity';
 import {UploadParcelsDto } from 'libs/dtos/parcelDtos.ts/UploadParcelsDto';
-import { error } from 'console';
 import { UpdateParcelDto } from 'libs/dtos/parcelDtos.ts/update-parcel.dto';
 import { Price } from 'libs/entities/prices.entity';
 import { CreateFlightDto } from 'libs/dtos/flightDtos/createFlightDto';
-import { use } from 'passport';
 import { PriceDto } from 'libs/dtos/PriceDto/updatePriceDto';
 
 
@@ -171,7 +169,7 @@ export class AdminService implements OnModuleInit {
       );
     }
   }
-  async getUsers(data: getUserDto): Promise<{ users: User[], totalPages: number, totalCount: number, currentPage: number }> {
+  async getUsers(data: getUserDto) {
     try {
         const {
             personalNumber = '',
@@ -180,10 +178,9 @@ export class AdminService implements OnModuleInit {
         } = data;
 
         const query = this.userRepository.createQueryBuilder('user')
-        .leftJoinAndSelect('user.userDetails', 'userDetails')
-        // .leftJoin('user.parcels', 'parcel')
-        // .addSelect(['parcel.tracking_id']);
-
+        .leftJoinAndSelect('user.userDetails', 'userDetails',)
+        .leftJoinAndSelect('user.transactions', 'transactions',)
+        
         if (personalNumber) {
             query.andWhere('user.personal_number = :personal_number', { personal_number: personalNumber });
         }
@@ -192,12 +189,20 @@ export class AdminService implements OnModuleInit {
         query.skip((page - 1) * limit).take(limit);
         const users = await query.getMany();
         const totalPages = Math.ceil(totalCount / limit);
+        
+        const parsedUser = users.map((user2) =>{
+          const  { transactions , balance , ...rest} = user2;
 
+          return {
+            ...rest,
+            balance,
+          }
+        })
         return {
-            users,
-            totalPages,
-            totalCount,
-            currentPage: page
+          parsedUser,
+          totalPages,
+          totalCount,
+          currentPage: page
         };
     } catch (error) {
         console.error('Error fetching users:', error);
