@@ -1,14 +1,14 @@
-import { Controller, Get, Post, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseInterceptors, UploadedFile, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtGuard } from 'libs/payloads/Jwt.Auth.Guard';
+import { CreateUserDto } from '../../libs/dtos/UserDto.ts/create-user.dto';
+import { UpdateUserDto } from '../../libs/dtos/UserDto.ts/update-user.dto';
+import { JwtGuard } from 'libs/guards/Jwt.Auth.Guard';
 import { GetUser } from 'libs/decorators/getUser';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { CreateDeclarationDto } from 'libs/dtos/declarationDtos.ts/createDeclarationDto';
 
 
-// @UseGuards(JwtGuard)
+@UseGuards(JwtGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -16,7 +16,6 @@ export class UserController {
 //  profili tavis tranzaqciebit da amanatebbit 
   @Get('profile') 
   async getProfile(@GetUser() user : userPaylaod ) {
-    console.log(user.sub)
     return  await this.userService.getProfile(user.sub); 
   }
 //  profilis update

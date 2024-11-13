@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Param, Delete,  Query, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, Put, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { UpdateUserDto } from 'libs/dtos/UserDto.ts/update-user.dto';
 import { UploadParcelsDto } from 'libs/dtos/parcelDtos.ts/UploadParcelsDto';
 import { UpdateParcelDto } from 'libs/dtos/parcelDtos.ts/update-parcel.dto';
+import { PriceDto } from 'libs/dtos/PriceDto/updatePriceDto';
+import { query } from 'express';
 
 // @UseGuards(JwtAdminGuard)
 @Controller('admin')
@@ -18,38 +20,43 @@ export class AdminController {
   // amanatebis modzebna 
 
   @Get('/get-parcels')
-  getParcels(@Query() data : getParcelDto) {
+  getParcels(@Query() data: getParcelDto) {
     return this.adminService.getAllParcel(data)
   }
 
-//  amanatebis washla 
-  // localhost:3000/admin/delete-parcel/523312112
-  @Delete('/delete-parcel/:id')
-  deleteParcel(@Param('id') id: string) {
-    return this.adminService.deleteParcel(id);
-  }
-  //  amanatebis  redaqtireba 
-  // localhost:3000/admin/update-parcel/523312112
+  //  amanatebis  redaqtireba +
   @Put('/update-parcel/:id')
   updateParcel(@Param('id') id: string, @Body() updateParcelDto: UpdateParcelDto) {
     return this.adminService.updateParcel(id, updateParcelDto);
   }
-//  useres  modzebna
+
+  //  amanatebis washla 
+
+  @Delete('/delete-parcel/:id')
+  deleteParcel(@Param('id') id: string) {
+    return this.adminService.deleteParcel(id);
+  }
+
+  //  useres  modzebna
   @Get('/get-users')
-  getUsers(@Query()data : getUserDto  ){
+  getUsers(@Query() data: getUserDto) {
     return this.adminService.getUsers(data)
   }
-//  users update
+  //  users update
 
   @Put('/update-user/:id')
-  updateUser(@Body() data : UpdateUserDto ,@Param('id') id: string, ){
-    return this.adminService.updateUser(id,data)
+  updateUser(@Body() data: UpdateUserDto, @Param('id') id: string,) {
+    return this.adminService.updateUser(id, data)
   }
-  
-//  users washla 
+
+  //  users washla 
   @Delete('/delete-user/:id')
-  deleteUser(@Param('id') id: string){
-    console.log(id)
+  deleteUser(@Param('id') id: string) {
     return this.adminService.deleteUser(id)
+  }
+
+  @Put('update-price')
+  updatePrice(@Query() data : {china : number, turkey : number}){
+    return this.adminService.updatePrice(data)
   }
 }

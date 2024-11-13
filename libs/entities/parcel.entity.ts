@@ -13,7 +13,7 @@ export class Parcel {
   @Column({ unique: true })
   tracking_id: string;
   
-  @Column({ nullable: true }) 
+  @Column({type : 'float' }) 
   weight: number;
 
   @Column("decimal", { precision: 10, scale: 2 })

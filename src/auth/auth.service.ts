@@ -47,7 +47,7 @@ export class AuthService {
         const payload = {
           email: createdUser.email,
           sub: createdUser.id,
-          AccessLevel: createdUser.accessLevel, // Make sure `accessLevel` exists on your User entity
+          accessLevel: createdUser.accessLevel, // Make sure `accessLevel` exists on your User entity
         };
 
         return {
@@ -75,7 +75,7 @@ export class AuthService {
       const payload = {
         email: user.email,
         sub: user.id,
-        AccessLevel: user.accessLevel
+        accessLevel: user.accessLevel
       };
 
       return {
@@ -97,7 +97,7 @@ export class AuthService {
     const payload = {
       email: user.email,
       sub: user.id,
-      AccessLevel: user.accessLevel,
+      accessLevel: user.accessLevel,
     };
     const resetToken = this.jwtService.sign(payload);
 

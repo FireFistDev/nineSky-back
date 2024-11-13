@@ -11,8 +11,12 @@ import { Transaction } from 'libs/entities/transactions.entity';
 import { UserDetails } from 'libs/entities/userDetails.entity';
 import { Flight } from 'libs/entities/flight.entity';
 import { Price } from 'libs/entities/prices.entity';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
+  controllers:[AppController],
+  providers:[AppService],
   imports: [
     AuthModule,
     AdminModule,
@@ -21,6 +25,7 @@ import { Price } from 'libs/entities/prices.entity';
       isGlobal: true, 
       envFilePath: '.env', 
     }),
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule], 
       inject: [ConfigService],
@@ -37,6 +42,7 @@ import { Price } from 'libs/entities/prices.entity';
         logging: false,
       }),
     }),
+    TypeOrmModule.forFeature([Price]),
 
   ],
 })

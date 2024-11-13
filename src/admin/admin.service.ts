@@ -4,7 +4,7 @@ import { User } from 'libs/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Parcel } from 'libs/entities/parcel.entity';
 
-import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { UpdateUserDto } from 'libs/dtos/UserDto.ts/update-user.dto';
 import { Flight } from 'libs/entities/flight.entity';
 import {UploadParcelsDto } from 'libs/dtos/parcelDtos.ts/UploadParcelsDto';
 import { error } from 'console';
@@ -12,6 +12,7 @@ import { UpdateParcelDto } from 'libs/dtos/parcelDtos.ts/update-parcel.dto';
 import { Price } from 'libs/entities/prices.entity';
 import { CreateFlightDto } from 'libs/dtos/flightDtos/createFlightDto';
 import { use } from 'passport';
+import { PriceDto } from 'libs/dtos/PriceDto/updatePriceDto';
 
 
 @Injectable()
@@ -180,15 +181,14 @@ export class AdminService implements OnModuleInit {
 
         const query = this.userRepository.createQueryBuilder('user')
         .leftJoinAndSelect('user.userDetails', 'userDetails')
-        .leftJoin('user.parcels', 'parcel')
-        .addSelect(['parcel.tracking_id']);
+        // .leftJoin('user.parcels', 'parcel')
+        // .addSelect(['parcel.tracking_id']);
 
         if (personalNumber) {
             query.andWhere('user.personal_number = :personal_number', { personal_number: personalNumber });
         }
 
         const totalCount = await query.getCount();
-
         query.skip((page - 1) * limit).take(limit);
         const users = await query.getMany();
         const totalPages = Math.ceil(totalCount / limit);
@@ -209,13 +209,11 @@ export class AdminService implements OnModuleInit {
     const user = await this.userRepository.findOne({
       where: { id },
       relations: ['userDetails'], // Ensures userDetails are loaded
-
     });
 
     if (!user) {
       throw new Error(`User with ID ${id} not found.`);
     }
-
     user.email = email ?? user.email;
     user.password = password ?? user.password;
       user.userDetails.first_name = first_name ?? user.userDetails.first_name;
@@ -242,6 +240,23 @@ export class AdminService implements OnModuleInit {
     } catch (error) {
       console.error('Error removing user:', error);
       throw new Error(error.message);
+    }
+  }
+
+
+
+  async updatePrice(data : PriceDto ) : Promise<void> {
+    try {
+      const {china , turkey } = data;
+      const PRICES = await this.PriceRepository.findOne({
+        where: {  id :  process.env.PRICE_ID},
+      
+      });
+      PRICES.China = china ?? PRICES.China
+      PRICES.Turkey = turkey ?? PRICES.Turkey
+      this.PriceRepository.save(PRICES);
+    } catch (error) {
+      
     }
   }
 
