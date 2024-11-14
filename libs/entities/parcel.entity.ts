@@ -8,8 +8,7 @@ import { Flight } from './flight.entity';
 @Entity()
 export class Parcel {
 
-  @PrimaryGeneratedColumn()
-
+  @PrimaryColumn()
   id : string;
   
   @Column({type : 'float' }) 

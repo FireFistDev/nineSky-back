@@ -65,7 +65,7 @@ export class AdminService implements OnModuleInit {
           throw new ConflictException(`owoner with this id ${parcel.ownerId} does not exist`)
         }
         const createdParcel = this.parcelRepository.create({
-          tracking_id: parcel.tracking_id,
+          id: parcel.tracking_id,
           price: Flight.flight_from === FlightFrom.CHINA ? parcel.weight * price.China : parcel.weight * price.Turkey,  
           owner: owner ? owner : null,
           weight: parcel.weight,
