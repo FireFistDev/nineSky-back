@@ -1,30 +1,32 @@
 import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
-import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from 'src/mailer/mailer.service';
-import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'libs/entities/user.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { UserDetails } from 'libs/entities/userDetails.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(UserDetails)
-    private readonly userDetailsRepository: Repository<UserDetails>,
     private readonly jwtService: JwtService,
-    private readonly entityManager: EntityManager, 
+    private readonly entityManager: EntityManager,
     private readonly mailerService: MailerService
   ) { }
   async register(registerDto: RegisterDto) {
     try {
-      // Start a transaction using the entity manager
       return await this.entityManager.transaction(async (transactionalEntityManager) => {
-        const userDetails = this.userDetailsRepository.create({
+
+        const user = transactionalEntityManager.create(User, {
+          email: registerDto.email,
+          password: await bcrypt.hash(registerDto.password, 10),
+        });
+
+        const createdUser = await transactionalEntityManager.save(user);
+        const userDetails = transactionalEntityManager.create(UserDetails, {
+          id: createdUser.id,
+          user: user,
           first_name: registerDto.first_name,
           last_name: registerDto.last_name,
           phone_number: registerDto.phone_number,
@@ -34,20 +36,12 @@ export class AuthService {
           address: registerDto.address,
         });
 
-        const savedUserDetails = await transactionalEntityManager.save(userDetails);
-
-        const user = this.userRepository.create({
-          email: registerDto.email,
-          password: registerDto.password, // Make sure to hash this password before saving!
-          userDetails: savedUserDetails,
-        });
-
-        const createdUser = await transactionalEntityManager.save(user);
+        await transactionalEntityManager.save(userDetails);
 
         const payload = {
           email: createdUser.email,
           sub: createdUser.id,
-          accessLevel: createdUser.accessLevel, // Make sure `accessLevel` exists on your User entity
+          accessLevel: createdUser.accessLevel,
         };
 
         return {
@@ -55,24 +49,25 @@ export class AuthService {
         };
       });
     } catch (error) {
-
-      if (error.message) {
-        throw new ConflictException(error.detail);
+      if (error.code === '23505') { 
+        throw new ConflictException('user With this email or personal number already exists');
+      } else if (error.code) {
+        throw new InternalServerErrorException(`Database error: ${error.detail}`);
+      } else {
+        throw new InternalServerErrorException('Failed to register user.');
       }
-      throw new InternalServerErrorException('Failed to register user.');
     }
   }
 
   async login(loginDto: LoginDto) {
     try {
       const { email, password } = loginDto;
-      
-      const user = await this.userRepository.findOne({ where : {email } });
-      // let passwordValid = await bcrypt.compare(password, user.password);
-      // // passwordValid = password
-      // if (!user || !passwordValid) {
-      //   throw new UnauthorizedException('პაროლი ან  ელ-ფოსტა არასწორია.');
-      // }
+
+      const user = await this.entityManager.findOne(User, { where: { email } });
+
+      let passwordValid = await bcrypt.compare(password, user.password);
+      if (!user || !passwordValid) throw new UnauthorizedException('პაროლი ან  ელ-ფოსტა არასწორია.');
+
       const payload = {
         email: user.email,
         sub: user.id,
@@ -84,14 +79,14 @@ export class AuthService {
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
-        throw new  UnauthorizedException(error.message)
+        throw new UnauthorizedException(error.message)
       }
       throw new InternalServerErrorException('Login failed.');
     }
   }
 
   async forgetPassword(email: string) {
-    const user = await this.userRepository.findOne({ where : {email } });
+    const user = await this.entityManager.findOne(User, { where: { email } });
     if (!user) {
       throw new NotFoundException('მომხმარებელი ამ ელ-ფოსტით ვერ მოიძებნა.');
     }

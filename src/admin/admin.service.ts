@@ -11,6 +11,7 @@ import { UpdateParcelDto } from 'libs/dtos/parcelDtos.ts/update-parcel.dto';
 import { Price } from 'libs/entities/prices.entity';
 import { CreateFlightDto } from 'libs/dtos/flightDtos/createFlightDto';
 import { PriceDto } from 'libs/dtos/PriceDto/updatePriceDto';
+import { FlightFrom } from 'libs/enums/flightsFrom.enum';
 
 
 @Injectable()
@@ -65,7 +66,7 @@ export class AdminService implements OnModuleInit {
         }
         const createdParcel = this.parcelRepository.create({
           tracking_id: parcel.tracking_id,
-          price: Flight.flight_from === 'china' ? parcel.weight * price.China : parcel.weight * price.Turkey,  
+          price: Flight.flight_from === FlightFrom.CHINA ? parcel.weight * price.China : parcel.weight * price.Turkey,  
           owner: owner ? owner : null,
           weight: parcel.weight,
           flight : Flight,

@@ -5,10 +5,10 @@ import { AppService } from "./app.service";
 
 @Controller('app')
 export class AppController {
-  constructor( private readonly appService : AppService ) { }
+  constructor(private readonly appService: AppService) { }
 
   @Get('get-prices')
-  getPrices(){
+  getPrices() {
     return this.appService.getPrices();
   }
 

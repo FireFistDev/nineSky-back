@@ -9,9 +9,8 @@ import { Flight } from './flight.entity';
 export class Parcel {
 
   @PrimaryGeneratedColumn()
+
   id : string;
-  @Column({ unique: true })
-  tracking_id: string;
   
   @Column({type : 'float' }) 
   weight: number;

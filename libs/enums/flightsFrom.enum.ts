@@ -1,4 +1,4 @@
 export enum FlightFrom { 
-    CHINA = 'china',
+    CHINA = 'China',
     TURKEY = 'Turkey',
 }

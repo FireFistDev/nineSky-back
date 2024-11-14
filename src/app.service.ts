@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Price } from "libs/entities/prices.entity";
-import { Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 
 
 
@@ -9,16 +9,16 @@ import { Repository } from "typeorm";
 @Injectable()
 export class AppService {
   constructor(
-    @InjectRepository(Price)
-    private PriceRepostiry: Repository<Price>,
+    private readonly entityManager: EntityManager,
+  ) { }
 
-  ) {}
-
-  async getPrices() { 
+  async getPrices()  : Promise<Price> {
     try {
-      return   await this.PriceRepostiry.findOne({where : { id : process.env.PRICE_ID}})
+      const prices = await this.entityManager.findOne(Price , { where: { id: process.env.PRICE_ID }})
+      return prices;
+
     } catch (error) {
-        
+      throw new InternalServerErrorException(error)
     }
   }
 }

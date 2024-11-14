@@ -1,4 +1,4 @@
 export enum PaymentType {
-    PAID = 'PAID',
-    UNPAID = 'UNPAID',
+    PAID = 'Paid',
+    UNPAID = 'Unpaid',
 }

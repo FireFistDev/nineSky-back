@@ -24,8 +24,7 @@ export class User {
   })
   accessLevel: AccessLevel;
 
-  @OneToOne(() => UserDetails, { cascade: true })
-  @JoinColumn()
+  @OneToOne(() => UserDetails, (userDetails) => userDetails.user, { cascade: true, nullable: true })
   userDetails: UserDetails;
 
   @OneToMany(() => Parcel, (parcel) => parcel.owner)

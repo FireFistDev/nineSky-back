@@ -32,7 +32,7 @@ import { AppService } from './app.service';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         host: configService.get<string>('localhost'), 
-        port: configService.get<number>('POSTGRES_PORT', 5432), 
+        port: configService.get<number>('POSTGRES_PORT'), 
         username: configService.get<string>('POSTGRES_USER'),
         password: configService.get<string>('POSTGRES_PASSWORD'),
         database: configService.get<string>('POSTGRES_DB'),

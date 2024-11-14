@@ -10,7 +10,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed methods
     credentials: true, // Enable credentials
   });
-
+  app.setGlobalPrefix('api')
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

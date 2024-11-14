@@ -29,12 +29,9 @@ export class UserService {
     try {
       const user = await this.userRepository.findOne({
         where: {id},
-        
-        relations: ['transactions','parcels', 'parcels.declaration', 'userDetails' , ],
+        relations: ['transactions','parcels', 'parcels.declaration', 'userDetails'],
       });
-      if (!user) {
-        throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
-      }
+
       return {
         ...user,
         balance : user.balance,
@@ -64,7 +61,7 @@ export class UserService {
       try {
         const { type, price, website, comment, invoice_Pdf, tracking_id } = createDeclarationDto;
         console.log(createDeclarationDto)
-        const parcel = await this.parcelRepository.findOne({ where: { tracking_id } });
+        const parcel = await this.parcelRepository.findOne({ where: { id : tracking_id } });
         const declaration = this.declarationRepository.create({
           type,
           price,
@@ -136,28 +133,5 @@ export class UserService {
     
     }
 
-  // async findOne(criteria: { [key: string]: any }){
-
-  //   try {
-
-  //     const user = await this.userRepository.findOne({
-  //       where: criteria,
-  //       relations: ['transactions','parcels', 'parcels.declaration'],
-  //     });
-  //     if (!user) {
-  //       throw new NotFoundException('მომხმარებელი ამ ID-ით ვერ მოიძებნა.');
-  //     }
-      
-  //     return { ...user, balance: user.balance, }
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       throw new NotFoundException(error.message)
-
-  //     }
-  //     throw new InternalServerErrorException('Internal server error.');
-
-  //   }
-  
- 
 
 }

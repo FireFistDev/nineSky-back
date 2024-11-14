@@ -1,6 +1,6 @@
 export enum ShippingStatus {
-  BROUGHT = 'brought',
-  SHIPPED = 'shipped',
-  ARRIVED = 'arrived',
-  TAKEN = 'taken',
+  BROUGHT = 'Brought',
+  SHIPPED = 'Shipped',
+  ARRIVED = 'Arrived',
+  TAKEN = 'Taken',
 }
