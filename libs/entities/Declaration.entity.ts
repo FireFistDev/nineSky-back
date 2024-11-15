@@ -1,13 +1,20 @@
 import {
   Column,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Parcel } from './parcel.entity';
 
 @Entity()
 export class Declaration {
   @PrimaryGeneratedColumn()
   id: string;
+  
+  @OneToOne(() => Parcel, (user) => user.declaration)
+  @JoinColumn()
+  parcel : Parcel;
 
   @Column()
   type: string;

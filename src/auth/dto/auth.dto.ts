@@ -19,7 +19,7 @@ export class RegisterDto {
 
   @IsString()
   @Matches(/^[0-9]+$/, { message: 'Phone number must contain only digits' })
-  @Length(10, 15, { message: 'Phone number must be between 10 and 15 digits' })
+  @Length(9, 15, { message: 'Phone number must be between 9 and 15 digits' })
   phone_number: string;
 
   @IsString()

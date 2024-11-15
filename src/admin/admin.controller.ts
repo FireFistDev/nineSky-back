@@ -3,21 +3,20 @@ import { AdminService } from './admin.service';
 import { UpdateUserDto } from 'libs/dtos/UserDto.ts/update-user.dto';
 import { UploadParcelsDto } from 'libs/dtos/parcelDtos.ts/UploadParcelsDto';
 import { UpdateParcelDto } from 'libs/dtos/parcelDtos.ts/update-parcel.dto';
-import { PriceDto } from 'libs/dtos/PriceDto/updatePriceDto';
-import { query } from 'express';
+import { JwtAdminGuard } from 'libs/guards/jwt.Admin.Guard';
+
 
 // @UseGuards(JwtAdminGuard)
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService,
   ) { }
-  //  amanatebis sheqmna 
+
 
   @Post('/create-parcels')
   uploadParcels(@Body() body: UploadParcelsDto) {
     return this.adminService.uploadParcels(body)
   }
-  // amanatebis modzebna 
 
   @Get('/get-parcels')
   getParcels(@Query() data: getParcelDto) {

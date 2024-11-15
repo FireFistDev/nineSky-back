@@ -10,12 +10,11 @@ export class CreateDeclarationDto {
   @IsNotEmpty()
   type: string;
 
-  @IsNumber()  // Transform string to number
+  // @IsNumber()  // Transform string to number
   @IsNotEmpty()
-  price: string;
+  price: number;
 
   @IsString()
-  @IsUrl()
   @IsNotEmpty()
   website: string;
 

@@ -31,7 +31,7 @@ export class Parcel {
   })
   payment_status: string;
 
-  @OneToOne(() => Declaration,{ cascade: true })
+  @OneToOne(() => Declaration,(declaration)=>declaration.parcel ,{ cascade: true })
   @JoinColumn() 
   declaration: Declaration;
 

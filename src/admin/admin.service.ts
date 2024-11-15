@@ -12,7 +12,8 @@ import { Price } from 'libs/entities/prices.entity';
 import { CreateFlightDto } from 'libs/dtos/flightDtos/createFlightDto';
 import { PriceDto } from 'libs/dtos/PriceDto/updatePriceDto';
 import { FlightFrom } from 'libs/enums/flightsFrom.enum';
-
+import * as bcrypt from 'bcrypt';
+import { AccessLevel } from 'libs/enums/accese.levels.enum';
 
 @Injectable()
 export class AdminService implements OnModuleInit {
@@ -33,9 +34,9 @@ export class AdminService implements OnModuleInit {
       const admin =await this.userRepository.findOne({where : { email: process.env.ADMIN_EMAIL }})
       if(!admin){
         const admin = this.userRepository.create({
-          password: process.env.ADMIN_PASSWORD,
+          password:  bcrypt.hashSync(process.env.ADMIN_PASSWORD,10),
           email: process.env.ADMIN_EMAIL,
-          accessLevel: 3,
+          accessLevel: AccessLevel.ADMIN,
         })
         await this.userRepository.save(admin)
       }
