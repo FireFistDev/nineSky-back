@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, IsNumber, IsEnum, IsOptional } from 'class-validator';
+import { ShippingStatus } from 'libs/enums/shipping.status.enum';
 
 export class CreateParcelDto {
   @IsNotEmpty()
@@ -7,7 +8,11 @@ export class CreateParcelDto {
 
   @IsOptional()
   @IsNumber()
-  weight?: number;
+  weight: number;
+
+  @IsOptional()
+  @IsEnum(ShippingStatus)
+  shipping_status?: ShippingStatus;
 
   @IsNotEmpty()
   @IsString()

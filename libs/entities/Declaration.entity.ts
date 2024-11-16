@@ -19,8 +19,8 @@ export class Declaration {
   @Column()
   type: string;
 
-  @Column()
-  price: string;
+  @Column("decimal", { precision: 10, scale: 2 })
+  price: number;
   @Column()
   website: string;
 
