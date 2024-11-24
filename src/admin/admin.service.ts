@@ -36,7 +36,7 @@ export class AdminService implements OnModuleInit {
         const admin = this.userRepository.create({
           password:  bcrypt.hashSync(process.env.ADMIN_PASSWORD,10),
           email: process.env.ADMIN_EMAIL,
-          accessLevel: AccessLevel.ADMIN,
+          accessLevel: AccessLevel.SUPER_ADMIN,
         })
         await this.userRepository.save(admin)
       }

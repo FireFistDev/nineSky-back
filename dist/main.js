@@ -1129,7 +1129,7 @@ let AdminService = class AdminService {
             const admin = this.userRepository.create({
                 password: bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10),
                 email: process.env.ADMIN_EMAIL,
-                accessLevel: accese_levels_enum_1.AccessLevel.ADMIN,
+                accessLevel: accese_levels_enum_1.AccessLevel.SUPER_ADMIN,
             });
             await this.userRepository.save(admin);
         }
@@ -2326,6 +2326,16 @@ module.exports = require("passport-jwt");
 
 module.exports = require("typeorm");
 
+/***/ }),
+
+/***/ "path":
+/*!***********************!*\
+  !*** external "path" ***!
+  \***********************/
+/***/ ((module) => {
+
+module.exports = require("path");
+
 /***/ })
 
 /******/ 	});
@@ -2367,13 +2377,15 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(/*! @nestjs/core */ "@nestjs/core");
 const app_module_1 = __webpack_require__(/*! ./app.module */ "./src/app.module.ts");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const path_1 = __webpack_require__(/*! path */ "path");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
-        origin: 'http://localhost:5173',
+        origin: '*',
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true,
     });
+    app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public/dist'));
     app.setGlobalPrefix('api');
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
