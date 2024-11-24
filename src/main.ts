@@ -9,7 +9,7 @@ async function bootstrap() {
   app.enableCors({
     origin: '*', // Allo`w all origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed methods
-    credentials: true, // Enable credentials
+    // credentials: true, // Enable credentials
   });
   app.useStaticAssets(join(__dirname, '..', 'public/dist'));
   app.setGlobalPrefix('api')
